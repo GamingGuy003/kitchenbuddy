@@ -1,18 +1,13 @@
-import { View } from "react-native";
-import { GreetAll } from "./../components/Greetings";
+import { Counter } from '@/components/counter';
+import { List } from '@/components/list/list';
+import { View } from 'react-native';
 
 export default function Index() {
+  const names: string[] = ["John", "Jack", "Jill", "Bill", "Belle", "Joan", "Bob"];
   return (
     <View>
-      <App/>
+      <Counter/>
+      <List content={names}/>
     </View>
   );
-}
-
-const App = () => {
-  const names: string[] = ["John", "Jack", "Jill", "Bill", "Belle", "Joan", "Bob"];
-
-  return (
-    <GreetAll names={names} />
-  )
 }
