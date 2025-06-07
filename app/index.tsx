@@ -2,14 +2,32 @@ import { Text, View } from "react-native";
 
 export default function Index() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Sepp</Text>
+    <View>
+      <App/>
     </View>
   );
+}
+
+const Greet = ({name}:{name:string}) => {
+  return (
+    <Text>
+      Hello {name}
+    </Text>
+  )
+}
+
+const GreetAll = ({names}:{names:string[]}) => {
+  return (
+    <View>
+      { names.map(name => <Greet name={name}/>) }
+    </View>
+  )
+}
+
+const App = () => {
+  const names: string[] = ["John", "Jack", "Jill", "Bill", "Belle", "Joan", "Bob"];
+
+  return (
+    <GreetAll names={names} />
+  )
 }
