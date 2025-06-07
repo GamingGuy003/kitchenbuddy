@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { GreetAll } from "./../components/Greetings";
 
 export default function Index() {
   return (
@@ -6,22 +7,6 @@ export default function Index() {
       <App/>
     </View>
   );
-}
-
-const Greet = ({name}:{name:string}) => {
-  return (
-    <Text>
-      Hello {name}
-    </Text>
-  )
-}
-
-const GreetAll = ({names}:{names:string[]}) => {
-  return (
-    <View>
-      { names.map(name => <Greet name={name}/>) }
-    </View>
-  )
 }
 
 const App = () => {
