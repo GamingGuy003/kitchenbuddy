@@ -9,13 +9,22 @@ export const List = ({content}:{content: string[]}) => {
             { selected ? 
                 <Pressable onPress={() => setSelected(null)}>
                     <Text>Selected: {selected}</Text>
-                </Pressable> :
+                </Pressable>
+                :
                 content.map((item: string) => (
-                    <Pressable onPress={() => setSelected(item)}>
-                        <Text>Content: {item}</Text>
-                    </Pressable>
+                    <ListElement content={item} onPress={() => setSelected(item)}/>
                 ))
             }
         </View>
+    )
+}
+
+type onPress = () => void
+
+const ListElement = ({content, onPress}:{content:string, onPress: onPress}) => {
+    return (
+        <Pressable onPress={() => onPress()}>
+            <Text>{content}</Text>
+        </Pressable>
     )
 }
