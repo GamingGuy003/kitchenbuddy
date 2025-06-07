@@ -12,7 +12,7 @@ export const List = ({content}:{content: string[]}) => {
                 </Pressable>
                 :
                 content.map((item: string) => (
-                    <ListElement content={item} onPress={() => setSelected(item)}/>
+                    <ListElement content={item} onPress={() => setSelected(item)} key={item}/>
                 ))
             }
         </View>
