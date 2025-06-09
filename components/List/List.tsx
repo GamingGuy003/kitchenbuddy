@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-export const List = ({content}:{content: string[]}) => {
+export const List = () => {
+    const names: string[] = ["John", "Jack", "Jill", "Bill", "Belle", "Joan", "Bob"];
     const [selected, setSelected] = useState<string|null>(null);
 
     return (
@@ -11,7 +12,7 @@ export const List = ({content}:{content: string[]}) => {
                     <Text>Selected: {selected}</Text>
                 </Pressable>
                 :
-                content.map((item: string) => (
+                names.map((item: string) => (
                     <ListElement content={item} onPress={() => setSelected(item)} key={item}/>
                 ))
             }
