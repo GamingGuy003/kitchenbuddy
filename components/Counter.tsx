@@ -8,13 +8,9 @@ export const Counter = () => {
 
     return (
         <View style={{ width: '100%', gap: 5 }}>
-            <Text style={style}>Count is {count}</Text>
+            <Text>Count is {count}</Text>
             <Button title='+' onPress={inc}/>
             <Button title='-' onPress={dec}/>
         </View>
     )
-}
-
-const style = {
-    color: '#770000',
 }

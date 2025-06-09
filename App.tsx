@@ -1,16 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { Counter } from './components/counter';
-import { List } from './components/list/list';
-import { NavigationContainer } from '@react-navigation/native';
+import { Counter } from './components/Counter';
+import { List } from './components/List/List';
 import Constants from 'expo-constants';
 
 export default function App() {
   const names: string[] = ["John", "Jack", "Jill", "Bill", "Belle", "Joan", "Bob"];
   return (
-        <View style={styles.container}>
-          <Counter/>
-          <List content={names}/>
-        </View>
+    <View style={styles.container}>
+      <Counter/>
+      <List content={names}/>
+    </View>
   );
 }
 
