@@ -7,7 +7,7 @@ export const Counter = () => {
     const dec = () => setCount(count - 1);
 
     return (
-        <View style={{ width: '100%' }}>
+        <View style={{ width: '100%', gap: 5 }}>
             <Text style={style}>Count is {count}</Text>
             <Button title='+' onPress={inc}/>
             <Button title='-' onPress={dec}/>
