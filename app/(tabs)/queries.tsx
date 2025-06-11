@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useMemo } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { useIngredients } from '../../context/IngredientContext';
@@ -6,15 +5,6 @@ import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import { Ingredient } from '../../types/index';
 import { CATEGORIES, LOCATIONS, CONFECTION_TYPES } from '../../constants/ingredientProperties';
-=======
-import { CATEGORIES, CONFECTION_TYPES, LOCATIONS } from '@/constants/ingredientProperties';
-import { useIngredients } from '@/context/IngredientContext';
-import { Ingredient } from '@/types/index';
-import { Picker } from '@react-native-picker/picker';
-import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
->>>>>>> 1995ddc59e84d476db68ea32e338f882257a57ab
 
 type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType';
 
