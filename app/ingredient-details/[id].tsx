@@ -7,7 +7,7 @@ import { Ingredient, IngredientData } from '../../types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { IngredientForm } from '../../components/IngredientForm'; // Import the IngredientForm
 
-function IngredientDetailScreen() {
+export default function IngredientDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
     const navigation = useNavigation(); // Get navigation object
@@ -141,5 +141,3 @@ const styles = StyleSheet.create({
     buttonContainer: { marginTop: 20 },
     centered: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
 });
-
-export default IngredientDetailScreen;

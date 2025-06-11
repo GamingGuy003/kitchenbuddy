@@ -12,7 +12,7 @@ interface IngredientFormProps {
     submitButtonTitle: string;
 }
 
-export function IngredientForm({ initialValues, onSubmit, submitButtonTitle }: IngredientFormProps) {
+export default function IngredientForm({ initialValues, onSubmit, submitButtonTitle }: IngredientFormProps) {
     const [name, setName] = useState(initialValues?.name || '');
     const [category, setCategory] = useState(initialValues?.category || '');
     const [location, setLocation] = useState(initialValues?.location || '');

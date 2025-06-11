@@ -1,15 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { useIngredients } from '../../context/IngredientContext';
-import { Picker } from '@react-native-picker/picker';
-import { useRouter } from 'expo-router';
 import { Ingredient } from '../../types/index';
 import { CATEGORIES, LOCATIONS, CONFECTION_TYPES } from '../../constants/ingredientProperties';
 
 type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType';
 
-function QueryScreen() {
+export default function QueryScreen() {
     const { ingredients } = useIngredients();
+
     const router = useRouter();
     const [queryType, setQueryType] = useState<QueryType>('recentlyAdded');
     const [filter, setFilter] = useState('');
@@ -99,5 +98,3 @@ const styles = StyleSheet.create({
         margin: 10,
     }
 });
-
-export default QueryScreen;

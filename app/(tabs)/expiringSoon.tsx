@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import { Ingredient } from '../../types';
 import { EXPIRY_THRESHOLDS } from '../../constants/ingredientProperties';
 
-function ExpiringSoonScreen() {
+export default function ExpiringSoonScreen() {
     const { ingredients } = useIngredients();
     const router = useRouter();
     const [search, setSearch] = useState('');
@@ -77,5 +77,3 @@ const styles = StyleSheet.create({
     searchInput: { height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingHorizontal: 8 },
     emptyText: { textAlign: 'center', marginTop: 20 },
 });
-
-export default ExpiringSoonScreen;
