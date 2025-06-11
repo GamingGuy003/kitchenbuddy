@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Alert, View } from 'react-native';
-import { useIngredients } from '../../context/IngredientContext';
 import { IngredientForm } from '../../components/IngredientForm';
+import { useIngredients } from '../../context/IngredientContext';
 import { IngredientData } from '../../types';
 
-function AddIngredientScreen() {
+export default function AddIngredientScreen() {
     const { addIngredient } = useIngredients();
     // Key to force re-render of IngredientForm after submission, effectively resetting it
     const [formKey, setFormKey] = useState(0);
@@ -33,5 +33,3 @@ function AddIngredientScreen() {
         </View>
     );
 }
-
-export default AddIngredientScreen;
