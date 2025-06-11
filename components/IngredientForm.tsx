@@ -1,0 +1,120 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, ScrollView, StyleSheet } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { CATEGORIES, LOCATIONS, CONFECTION_TYPES, EXPIRY_ESTIMATES, ExpiryEstimate } from '../constants/ingredientProperties';
+import { IngredientData } from '../types'; // Assuming IngredientData is the type for form data
+
+interface IngredientFormProps {
+    initialValues?: Partial<IngredientData>;
+    onSubmit: (data: IngredientData) => void;
+    submitButtonTitle: string;
+}
+
+export function IngredientForm({ initialValues, onSubmit, submitButtonTitle }: IngredientFormProps) {
+    const [name, setName] = useState(initialValues?.name || '');
+    const [category, setCategory] = useState(initialValues?.category || '');
+    const [location, setLocation] = useState(initialValues?.location || '');
+    const [confectionType, setConfectionType] = useState(initialValues?.confectionType || '');
+    const [expirationDate, setExpirationDate] = useState<Date | undefined>(
+        initialValues?.expirationDate ? new Date(initialValues.expirationDate) : undefined
+    );
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+    useEffect(() => {
+        // Update form if initialValues change (e.g. when navigating to edit an already loaded item)
+        if (initialValues) {
+            setName(initialValues.name || '');
+            setCategory(initialValues.category || '');
+            setLocation(initialValues.location || '');
+            setConfectionType(initialValues.confectionType || '');
+            setExpirationDate(initialValues.expirationDate ? new Date(initialValues.expirationDate) : undefined);
+        }
+    }, [initialValues]);
+
+    const showDatePicker = () => setDatePickerVisibility(true);
+    const hideDatePicker = () => setDatePickerVisibility(false);
+
+    const handleConfirmDate = (date: Date) => {
+        setExpirationDate(date);
+        hideDatePicker();
+    };
+
+    const handleSelectEstimate = (days: number) => {
+        const newDate = new Date();
+        newDate.setDate(newDate.getDate() + days);
+        setExpirationDate(newDate);
+    };
+
+    const handleSubmit = () => {
+        onSubmit({
+            name,
+            category: category || undefined, // Ensure empty strings become undefined if desired by type
+            location: location || undefined,
+            confectionType: confectionType || undefined,
+            expirationDate,
+        });
+    };
+
+    return (
+        <KeyboardAwareScrollView>
+            <ScrollView contentContainerStyle={styles.container}>
+                <Text style={styles.label}>Name*</Text>
+                <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g., Apples" />
+
+                <Text style={styles.label}>Category</Text>
+                <Picker selectedValue={category} onValueChange={setCategory}>
+                    <Picker.Item label="Select Category..." value="" />
+                    {CATEGORIES.map(cat => <Picker.Item key={cat} label={cat} value={cat} />)}
+                </Picker>
+
+                <Text style={styles.label}>Location</Text>
+                <Picker selectedValue={location} onValueChange={setLocation}>
+                    <Picker.Item label="Select Location..." value="" />
+                    {LOCATIONS.map(loc => <Picker.Item key={loc} label={loc} value={loc} />)}
+                </Picker>
+
+                <Text style={styles.label}>Confection Type</Text>
+                <Picker selectedValue={confectionType} onValueChange={setConfectionType}>
+                    <Picker.Item label="Select Confection Type..." value="" />
+                    {CONFECTION_TYPES.map(con => <Picker.Item key={con} label={con} value={con} />)}
+                </Picker>
+
+                <Text style={styles.label}>Expiration Date</Text>
+                <Button title={expirationDate ? `Selected: ${expirationDate.toLocaleDateString()}` : "Pick Exact Date"} onPress={showDatePicker} />
+                <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    date={expirationDate || new Date()}
+                    onConfirm={handleConfirmDate}
+                    onCancel={hideDatePicker}
+                    minimumDate={new Date()}
+                />
+
+                <Text style={styles.estimateLabel}>Or Estimate Expiry:</Text>
+                <View style={styles.estimateButtonsContainer}>
+                    {EXPIRY_ESTIMATES.map((estimate: ExpiryEstimate) => (
+                        <View key={estimate.label} style={styles.estimateButton}>
+                            <Button title={estimate.label} onPress={() => handleSelectEstimate(estimate.days)} />
+                        </View>
+                    ))}
+                </View>
+
+                <View style={styles.submitButtonContainer}>
+                    <Button title={submitButtonTitle} onPress={handleSubmit} />
+                </View>
+            </ScrollView>
+        </KeyboardAwareScrollView>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: { padding: 20 },
+    label: { fontSize: 16, marginTop: 10, marginBottom: 5 },
+    input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 10, borderRadius: 5, height: 40 },
+    estimateLabel: { marginTop: 15, marginBottom: 5, fontSize: 16 },
+    estimateButtonsContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around', marginBottom: 20 },
+    estimateButton: { margin: 5 },
+    submitButtonContainer: { marginTop: 20 },
+});
