@@ -1,4 +1,4 @@
-import { IngredientForm } from '../../components/IngredientForm';
+import IngredientForm from '../../components/IngredientForm';
 import { useIngredients } from '../../context/IngredientContext';
 import { IngredientData } from '../../types';
 import React, { useState } from 'react';
