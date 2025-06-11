@@ -9,7 +9,8 @@ import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'r
 type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType';
 
 export default function QueryScreen() {
-    const ingredients = useIngredients().ingredients;
+    const { ingredients } = useIngredients();
+
     const router = useRouter();
     const [queryType, setQueryType] = useState<QueryType>('recentlyAdded');
     const [filter, setFilter] = useState('');

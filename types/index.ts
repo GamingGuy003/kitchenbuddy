@@ -1,10 +1,10 @@
 export interface Ingredient {
   id: string;
   name: string;
-  category: string;
-  location: string;
-  confectionType: string;
-  expirationDate?: Date;
+  category: string | undefined;
+  location: string | undefined;
+  confectionType: string | undefined;
+  expirationDate?: Date | undefined;
   addedDate: Date;
 }
 
