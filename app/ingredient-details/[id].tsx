@@ -1,4 +1,4 @@
-import { IngredientForm } from '../../components/IngredientForm'; // Import the IngredientForm
+import IngredientForm from '../../components/IngredientForm'; // Import the IngredientForm
 import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient, IngredientData } from '../../types';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
