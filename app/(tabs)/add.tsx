@@ -1,8 +1,8 @@
+import { IngredientForm } from '@/components/IngredientForm';
+import { useIngredients } from '@/context/IngredientContext';
+import { IngredientData } from '@/types';
 import React, { useState } from 'react';
 import { Alert, View } from 'react-native';
-import { IngredientForm } from '../../components/IngredientForm';
-import { useIngredients } from '../../context/IngredientContext';
-import { IngredientData } from '../../types';
 
 export default function AddIngredientScreen() {
     const { addIngredient } = useIngredients();

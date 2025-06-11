@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, ScrollView, StyleSheet } from 'react-native';
+import { CATEGORIES, CONFECTION_TYPES, EXPIRY_ESTIMATES, ExpiryEstimate, LOCATIONS } from '@/constants/ingredientProperties';
+import { IngredientData } from '@/types'; // Assuming IngredientData is the type for form data
 import { Picker } from '@react-native-picker/picker';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import React, { useEffect, useState } from 'react';
+import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { CATEGORIES, LOCATIONS, CONFECTION_TYPES, EXPIRY_ESTIMATES, ExpiryEstimate } from '../constants/ingredientProperties';
-import { IngredientData } from '../types'; // Assuming IngredientData is the type for form data
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 interface IngredientFormProps {
     initialValues?: Partial<IngredientData>;

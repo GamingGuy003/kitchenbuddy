@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
-import { useIngredients } from '../../context/IngredientContext';
+import { CATEGORIES, CONFECTION_TYPES, LOCATIONS } from '@/constants/ingredientProperties';
+import { useIngredients } from '@/context/IngredientContext';
+import { Ingredient } from '@/types/index';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
-import { Ingredient } from '../../types/index';
-import { CATEGORIES, LOCATIONS, CONFECTION_TYPES } from '../../constants/ingredientProperties';
+import React, { useMemo, useState } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType';
 
