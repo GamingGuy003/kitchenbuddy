@@ -41,8 +41,6 @@ export default function ExpiringSoonScreen() {
             groups[dateKey].push(ingredient);
         }
 
-        //console.log(groups);
-
         return Object.entries(groups).map((group) => {
             const expiryDate = new Date(group[0]);
             console.log(expiryDate)
@@ -66,6 +64,7 @@ export default function ExpiringSoonScreen() {
         </TouchableOpacity>
     );
 
+    // debounce such taht slider doesnt lag out application
     const debounceUpdate = useCallback(
         debounce((value: number) => {
             setDaysThreshold(value)
