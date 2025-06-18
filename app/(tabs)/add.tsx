@@ -1,20 +1,9 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import { Alert, View } from 'react-native';
-=======
-import IngredientForm from '../../components/IngredientForm';
->>>>>>> b4b0a379aa1e27c5311bd72574b03bbf93db5002
 import { useIngredients } from '../../context/IngredientContext';
 import { IngredientData } from '../../types';
-<<<<<<< HEAD
 
 function AddIngredientScreen() {
-=======
-import React, { useState } from 'react';
-import { Alert, View } from 'react-native';
-
-export default function AddIngredientScreen() {
->>>>>>> b4b0a379aa1e27c5311bd72574b03bbf93db5002
     const { addIngredient } = useIngredients();
     // Key to force re-render of IngredientForm after submission, effectively resetting it
     const [formKey, setFormKey] = useState(0);
@@ -43,8 +32,5 @@ export default function AddIngredientScreen() {
         </View>
     );
 }
-<<<<<<< HEAD
 
 export default AddIngredientScreen;
-=======
->>>>>>> b4b0a379aa1e27c5311bd72574b03bbf93db5002
