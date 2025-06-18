@@ -1,13 +1,8 @@
-<<<<<<< HEAD
-=======
 import IngredientForm from '../../components/IngredientForm';
 import { useIngredients } from '../../context/IngredientContext';
 import { IngredientData } from '../../types/ingredient';
->>>>>>> faac2aab694a28ff654c32d9e3b48f2038ee2ac6
 import React, { useState } from 'react';
 import { Alert, View } from 'react-native';
-import { useIngredients } from '../../context/IngredientContext';
-import { IngredientData } from '../../types';
 
 function AddIngredientScreen() {
     const { addIngredient } = useIngredients();

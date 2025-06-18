@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, ScrollView, Alert, StyleSheet } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import { useIngredients } from '../../context/IngredientContext';
-import { Ingredient, IngredientData } from '../../types';
-=======
 import IngredientForm from '../../components/IngredientForm'; // Import the IngredientForm
 import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient, IngredientData } from '../../types/ingredient';
@@ -13,9 +5,7 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, View } from 'react-native';
->>>>>>> faac2aab694a28ff654c32d9e3b48f2038ee2ac6
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { IngredientForm } from '../../components/IngredientForm'; // Import the IngredientForm
 
 export default function IngredientDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();

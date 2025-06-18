@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-import React, { useState, useMemo } from 'react';
-import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
-import { useIngredients } from '../../context/IngredientContext';
-import { Ingredient } from '../../types/index';
-import { CATEGORIES, LOCATIONS, CONFECTION_TYPES } from '../../constants/ingredientProperties';
-=======
 import { CATEGORIES, CONFECTIONS, LOCATIONS } from '../../constants/ingredientProperties';
 import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient, IngredientCategory, IngredientConfection, IngredientLocation } from '../../types/ingredient';
@@ -12,7 +5,6 @@ import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { FlatList, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
->>>>>>> faac2aab694a28ff654c32d9e3b48f2038ee2ac6
 
 type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType';
 type Filter = IngredientCategory | IngredientConfection | IngredientLocation | undefined;
