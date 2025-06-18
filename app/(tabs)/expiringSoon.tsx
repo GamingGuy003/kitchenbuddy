@@ -1,80 +1,59 @@
-import { EXPIRY_THRESHOLDS } from '../../constants/ingredientProperties';
 import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient } from '../../types/ingredient';
-import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { FlatList, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Slider from '@react-native-community/slider';
+import debounce from 'lodash.debounce';
 
 export default function ExpiringSoonScreen() {
     const { ingredients } = useIngredients();
     const router = useRouter();
     const [search, setSearch] = useState('');
-    const [daysThreshold, setDaysThreshold] = useState<number>(EXPIRY_THRESHOLDS[1].value); // Default to 7 days
+    const [daysThreshold, setDaysThreshold] = useState<number>(0); // Defaults to what spoils today (in 0 days)
 
-    const groupExpiringIngredients = () => {
-        // translate all possible expiration categories to sections
-        const grouped: { title: string, data: Ingredient[], value: number | undefined, range?: [number, number] }[] = EXPIRY_THRESHOLDS.map((threshold) => { return {
-            title: threshold.label,
-            data: [],
-            value: threshold.value,
-            range: threshold.range
-        }});
-        // add section for no expiration date
-        grouped.push({
-            title: 'No expiration',
-            data: [],
-            value: undefined,
-            range: undefined
-        });
-
-        // get current date
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        let group: Ingredient[] | undefined = [];
-        for (const ingredient of ingredients) {
-            // if no expiration date is set, add to no expiration section
-            if (!ingredient.expirationDate) {
-                group = grouped.find((group) => group.value === undefined)?.data;
-            } else {
-                // calculate amount of days until ingredient expires
-                const expiryDate = new Date(ingredient.expirationDate);
-                expiryDate.setHours(0,0,0,0);
-                const diffTime = expiryDate.getTime() - today.getTime();
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
-                // if amount of days until expiration falls within range
-                group = grouped.find((group) => group.range ? (diffDays >= group.range[0] && diffDays <= group.range[1]) : false)?.data
-            }
-            group ? group.push(ingredient) : {};
-        }
-        // remove unneeded fields and filter to only return actual data
-        return grouped.map((group) => { return {
-            title: group.title,
-            data: group.data
-        }}).filter((group) => group.data.length > 0);
-    }
-
-    const expiringIngredients = useMemo(() => {
+    const expiringIngredients = useMemo(() => {        
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
 
-        return ingredients
-            .filter(ingredient => {
-                // if no expiration date do not try to sort
-                if (!ingredient.expirationDate) return false;
+        // remove any ingredients not matching the chosen expiry time
+        const filteredIngredients = ingredients.filter((ingredient) => {
+            // if no expiration date set
+            if (!ingredient.expirationDate) return false;
+            // if not matching search term
+            if (!ingredient.name.toLocaleLowerCase().includes(search.toLowerCase())) return false;
 
-                const expiryDate = new Date(ingredient.expirationDate);
-                expiryDate.setHours(0,0,0,0); // Normalize expiry date
-                const diffTime = expiryDate.getTime() - today.getTime();
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const expiryDate = new Date(ingredient.expirationDate);
+            expiryDate.setHours(0,0,0,0); // Normalize expiry date
+            const diffTime = expiryDate.getTime() - today.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                // if overdue check if item is also overdue, otherwhise check if item falls into category
-                return daysThreshold === -1 ? diffDays < 0 : diffDays >= 0 && diffDays >= daysThreshold;
-            })
-            .filter(i => i.name.toLowerCase().includes(search.toLowerCase()))
-            .sort((a, b) => (a.expirationDate?.getTime() || 0) - (b.expirationDate?.getTime() || 0)); // Sort by soonest expiring
+            // check which items
+            return (daysThreshold !== null) ? diffDays <= daysThreshold : false;
+        });
+
+        // group items with same due date
+        const groups: Record<string, Ingredient[]> = {};
+        for (const ingredient of filteredIngredients) {
+            if (!ingredient.expirationDate) continue;
+            const dateKey = ingredient.expirationDate.toDateString();
+            if (!groups[dateKey]) groups[dateKey] = [];
+            groups[dateKey].push(ingredient);
+        }
+
+        //console.log(groups);
+
+        return Object.entries(groups).map((group) => {
+            const expiryDate = new Date(group[0]);
+            console.log(expiryDate)
+            expiryDate.setHours(0,0,0,0); // Normalize expiry date
+            const diffTime = expiryDate.getTime() - today.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return {
+                title: diffDays,
+                data: group[1]
+            }}).sort((a, b) => a.title - b.title)
+            .map((group) => ({ title: group.title.toString(), data: group.data }));
     }, [ingredients, search, daysThreshold]);
 
     const renderIngredientItem = ({ item }: { item: Ingredient }) => (
@@ -87,29 +66,24 @@ export default function ExpiringSoonScreen() {
         </TouchableOpacity>
     );
 
+    const debounceUpdate = useCallback(
+        debounce((value: number) => {
+            setDaysThreshold(value)
+        }, 100),
+        []
+    )
+
     return (
         <View style={styles.container}>
-            <Picker selectedValue={daysThreshold} onValueChange={(itemValue) => setDaysThreshold(itemValue as number)}>
-                <Picker.Item label='All' value={null}/>
-                {EXPIRY_THRESHOLDS.map(threshold => (<Picker.Item key={threshold.value} label={threshold.label} value={threshold.value}/>))}
-            </Picker>
+            <Text style={styles.listSectionHeader}>Items expiring within {daysThreshold} days</Text>
+            <Slider onValueChange={debounceUpdate} minimumValue={0} maximumValue={30} value={daysThreshold} step={1} StepMarker={(props) => props.index % 5 == 0 ? <Text style={styles.sliderMarker}>{props.index}</Text> : null} style={styles.slider}/>
             <TextInput style={styles.searchInput} placeholder="Search expiring ingredients..." value={search} onChangeText={setSearch}/>
-            {daysThreshold !== null ?
-            <FlatList
-                data={expiringIngredients}
-                renderItem={renderIngredientItem}
-                keyExtractor={item => item.id}
-                ListEmptyComponent={<Text style={styles.emptyText}>No ingredients expiring within this period.</Text>}
-            /> : 
             <SectionList
-                sections={groupExpiringIngredients()}
+                sections={expiringIngredients}
                 keyExtractor={(item) => item.id}
                 renderItem={renderIngredientItem}
-                renderSectionHeader={({section: {title}}) => (
-                    <Text style={styles.listSectionHeader}>{title}</Text>
-                )}
-            />}
-            
+                renderSectionHeader={({section: {title}}) => <Text style={styles.listSectionHeader}>Expiring in {title} days</Text>}
+            />
         </View>
     );
 }
@@ -141,7 +115,12 @@ const styles = StyleSheet.create({
     },
     listSectionHeader: {
         fontWeight: 'bold',
-        fontSize: 32,
-        textAlign: 'center'
+        fontSize: 24,
     },
+    sliderMarker: {
+        paddingTop: 15,
+    },
+    slider: {
+        margin: 20
+    }
 });

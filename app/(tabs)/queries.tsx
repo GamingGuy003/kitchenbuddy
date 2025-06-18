@@ -112,9 +112,7 @@ export default function QueryScreen() {
                 sections={groupItemsByField()}
                 keyExtractor={(item) => item.id}
                 renderItem={renderIngredientItem}
-                renderSectionHeader={({section: {title}}) => (
-                    <Text style={styles.listSectionHeader}>{title}</Text>
-                )}
+                renderSectionHeader={({section: {title}}) => <Text style={styles.listSectionHeader}>{title}</Text>}
             />
         } else {
             return <FlatList 

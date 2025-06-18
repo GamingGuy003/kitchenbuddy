@@ -17,13 +17,12 @@ export const EXPIRY_ESTIMATES: ExpiryEstimate[] = [
 export interface ExpiryThreshold {
     label: string;
     value: number;
-    range: [number, number]
 }
 export const EXPIRY_THRESHOLDS: ExpiryThreshold[] = [
-    { label: 'Next 3 Days', value: 3, range: [1, 3] },
-    { label: 'Next 7 Days', value: 7, range: [4, 7] },
-    { label: 'Next 14 Days', value: 14, range: [8, 14] },
-    { label: 'Next 30 Days', value: 30, range: [15, 30] },
-    { label: 'Today', value: 0, range: [0, 0] },
-    { label: 'Overdue', value: -1, range: [-1, -1] },
+    { label: 'Next 3 Days', value: 3 },
+    { label: 'Next 7 Days', value: 7 },
+    { label: 'Next 14 Days', value: 14 },
+    { label: 'Next 30 Days', value: 30 },
+    { label: 'Today', value: 0 },
+    { label: 'Overdue', value: -1 },
 ];
