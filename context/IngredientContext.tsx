@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ingredient, IngredientContextType } from '../types';
+import { Ingredient, IngredientContextType } from '../types/ingredient';
 
 const INGREDIENTS_STORAGE_KEY = '@kitchen_buddy_ingredients';
 

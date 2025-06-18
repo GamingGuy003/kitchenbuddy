@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, ScrollView, StyleSheet } from 'react-native';
+import { EXPIRY_ESTIMATES, ExpiryEstimate, CATEGORIES, LOCATIONS, CONFECTIONS } from '../constants/ingredientProperties';
+import { IngredientData } from '../types/ingredient'; // Assuming IngredientData is the type for form data
 import { Picker } from '@react-native-picker/picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -14,12 +14,10 @@ interface IngredientFormProps {
 
 export default function IngredientForm({ initialValues, onSubmit, submitButtonTitle }: IngredientFormProps) {
     const [name, setName] = useState(initialValues?.name || '');
-    const [category, setCategory] = useState(initialValues?.category || '');
-    const [location, setLocation] = useState(initialValues?.location || '');
-    const [confectionType, setConfectionType] = useState(initialValues?.confectionType || '');
-    const [expirationDate, setExpirationDate] = useState<Date | undefined>(
-        initialValues?.expirationDate ? new Date(initialValues.expirationDate) : undefined
-    );
+    const [category, setCategory] = useState(initialValues?.category);
+    const [location, setLocation] = useState(initialValues?.location);
+    const [confectionType, setConfectionType] = useState(initialValues?.confectionType);
+    const [expirationDate, setExpirationDate] = useState<Date | undefined>(initialValues?.expirationDate ? new Date(initialValues.expirationDate) : undefined);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     useEffect(() => {
@@ -50,7 +48,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     const handleSubmit = () => {
         onSubmit({
             name,
-            category: category || undefined, // Ensure empty strings become undefined if desired by type
+            category: category || undefined,
             location: location || undefined,
             confectionType: confectionType || undefined,
             expirationDate,
@@ -66,19 +64,19 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 <Text style={styles.label}>Category</Text>
                 <Picker selectedValue={category} onValueChange={setCategory}>
                     <Picker.Item label="Select Category..." value="" />
-                    {CATEGORIES.map(cat => <Picker.Item key={cat} label={cat} value={cat} />)}
+                    {CATEGORIES.map(category => <Picker.Item key={category} label={category} value={category} />)}
                 </Picker>
 
                 <Text style={styles.label}>Location</Text>
                 <Picker selectedValue={location} onValueChange={setLocation}>
                     <Picker.Item label="Select Location..." value="" />
-                    {LOCATIONS.map(loc => <Picker.Item key={loc} label={loc} value={loc} />)}
+                    {LOCATIONS.map(location => <Picker.Item key={location} label={location} value={location} />)}
                 </Picker>
 
                 <Text style={styles.label}>Confection Type</Text>
                 <Picker selectedValue={confectionType} onValueChange={setConfectionType}>
                     <Picker.Item label="Select Confection Type..." value="" />
-                    {CONFECTION_TYPES.map(con => <Picker.Item key={con} label={con} value={con} />)}
+                    {CONFECTIONS.map(confection => <Picker.Item key={confection} label={confection} value={confection} />)}
                 </Picker>
 
                 <Text style={styles.label}>Expiration Date</Text>
@@ -110,11 +108,37 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
 }
 
 const styles = StyleSheet.create({
-    container: { padding: 20 },
-    label: { fontSize: 16, marginTop: 10, marginBottom: 5 },
-    input: { borderWidth: 1, borderColor: '#ccc', padding: 10, marginBottom: 10, borderRadius: 5, height: 40 },
-    estimateLabel: { marginTop: 15, marginBottom: 5, fontSize: 16 },
-    estimateButtonsContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around', marginBottom: 20 },
-    estimateButton: { margin: 5 },
-    submitButtonContainer: { marginTop: 20 },
+    container: {
+        padding: 20
+    },
+    label: {
+        fontSize: 16,
+        marginTop: 10,
+        marginBottom: 5
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        marginBottom: 10,
+        borderRadius: 5,
+        height: 40 
+    },
+    estimateLabel: {
+        marginTop: 15,
+        marginBottom: 5,
+        fontSize: 16
+    },
+    estimateButtonsContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+        marginBottom: 20
+    },
+    estimateButton: {
+        margin: 5
+    },
+    submitButtonContainer: {
+        marginTop: 20
+    },
 });
