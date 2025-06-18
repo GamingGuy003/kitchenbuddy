@@ -1,10 +1,16 @@
+import { CATEGORIES, CONFECTIONS, LOCATIONS } from "../constants/ingredientProperties";
+
+export type IngredientCategory = typeof CATEGORIES[number];
+export type IngredientLocation = typeof LOCATIONS[number];
+export type IngredientConfection = typeof CONFECTIONS[number];
+
 export interface Ingredient {
   id: string;
   name: string;
-  category: string | undefined;
-  location: string | undefined;
-  confectionType: string | undefined;
-  expirationDate?: Date | undefined;
+  category?: IngredientCategory;
+  location?: IngredientLocation;
+  confectionType?: IngredientConfection;
+  expirationDate?: Date;
   addedDate: Date;
 }
 
@@ -18,8 +24,8 @@ export type IngredientContextType = {
 
 export interface IngredientData { // For form submissions
   name: string;
-  category?: string;
-  location?: string;
-  confectionType?: string;
+  category?: IngredientCategory;
+  location?: IngredientLocation;
+  confectionType?: IngredientConfection;
   expirationDate?: Date;
 }

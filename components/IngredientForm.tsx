@@ -1,4 +1,4 @@
-import { CATEGORIES, CONFECTION_TYPES, EXPIRY_ESTIMATES, ExpiryEstimate, LOCATIONS } from '../constants/ingredientProperties';
+import { EXPIRY_ESTIMATES, ExpiryEstimate, CATEGORIES, LOCATIONS, CONFECTIONS } from '../constants/ingredientProperties';
 import { IngredientData } from '../types'; // Assuming IngredientData is the type for form data
 import { Picker } from '@react-native-picker/picker';
 import React, { useEffect, useState } from 'react';
@@ -14,9 +14,9 @@ interface IngredientFormProps {
 
 export default function IngredientForm({ initialValues, onSubmit, submitButtonTitle }: IngredientFormProps) {
     const [name, setName] = useState(initialValues?.name || '');
-    const [category, setCategory] = useState(initialValues?.category || '');
-    const [location, setLocation] = useState(initialValues?.location || '');
-    const [confectionType, setConfectionType] = useState(initialValues?.confectionType || '');
+    const [category, setCategory] = useState(initialValues?.category);
+    const [location, setLocation] = useState(initialValues?.location);
+    const [confectionType, setConfectionType] = useState(initialValues?.confectionType);
     const [expirationDate, setExpirationDate] = useState<Date | undefined>(
         initialValues?.expirationDate ? new Date(initialValues.expirationDate) : undefined
     );
@@ -26,9 +26,9 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
         // Update form if initialValues change (e.g. when navigating to edit an already loaded item)
         if (initialValues) {
             setName(initialValues.name || '');
-            setCategory(initialValues.category || '');
-            setLocation(initialValues.location || '');
-            setConfectionType(initialValues.confectionType || '');
+            setCategory(initialValues.category);
+            setLocation(initialValues.location);
+            setConfectionType(initialValues.confectionType);
             setExpirationDate(initialValues.expirationDate ? new Date(initialValues.expirationDate) : undefined);
         }
     }, [initialValues]);
@@ -78,7 +78,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 <Text style={styles.label}>Confection Type</Text>
                 <Picker selectedValue={confectionType} onValueChange={setConfectionType}>
                     <Picker.Item label="Select Confection Type..." value="" />
-                    {CONFECTION_TYPES.map(con => <Picker.Item key={con} label={con} value={con} />)}
+                    {CONFECTIONS.map(con => <Picker.Item key={con} label={con} value={con} />)}
                 </Picker>
 
                 <Text style={styles.label}>Expiration Date</Text>

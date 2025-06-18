@@ -1,6 +1,6 @@
 export const CATEGORIES = ['Fruit', 'Vegetable', 'Dairy', 'Fish', 'Meat', 'Liquid', 'Pantry Staple', 'Spice', 'Other'];
 export const LOCATIONS = ['Fridge', 'Freezer', 'Pantry', 'Counter', 'Other'];
-export const CONFECTION_TYPES = ['Fresh', 'Canned', 'Frozen', 'Cured', 'Dried', 'Cooked', 'Other'];
+export const CONFECTIONS = ['Fresh', 'Canned', 'Frozen', 'Cured', 'Dried', 'Cooked', 'Other'];
 
 export interface ExpiryEstimate {
     label: string;
