@@ -1,6 +1,6 @@
 import IngredientForm from '../../components/IngredientForm';
 import { useIngredients } from '../../context/IngredientContext';
-import { IngredientData } from '../../types';
+import { IngredientData } from '../../types/ingredient';
 import React, { useState } from 'react';
 import { Alert, View } from 'react-native';
 

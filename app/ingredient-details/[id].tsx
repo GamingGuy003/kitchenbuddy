@@ -1,6 +1,6 @@
 import IngredientForm from '../../components/IngredientForm'; // Import the IngredientForm
 import { useIngredients } from '../../context/IngredientContext';
-import { Ingredient, IngredientData } from '../../types';
+import { Ingredient, IngredientData } from '../../types/ingredient';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';

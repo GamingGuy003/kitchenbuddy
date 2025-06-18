@@ -1,6 +1,6 @@
 import { CATEGORIES, CONFECTIONS, LOCATIONS } from '../../constants/ingredientProperties';
 import { useIngredients } from '../../context/IngredientContext';
-import { Ingredient, IngredientCategory, IngredientConfection, IngredientLocation } from '../../types/index';
+import { Ingredient, IngredientCategory, IngredientConfection, IngredientLocation } from '../../types/ingredient';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
@@ -108,9 +108,8 @@ export default function QueryScreen() {
     const RenderIngredientList = () => {
         // if querytype has subcategories and no filter has been chosen, show section list with all items
         if (filter === '' && queryType != 'missingData' && queryType != 'recentlyAdded') {
-            const segmented = groupItemsByField();
             return <SectionList
-                sections={segmented}
+                sections={groupItemsByField()}
                 keyExtractor={(item) => item.id}
                 renderItem={renderIngredientItem}
                 renderSectionHeader={({section: {title}}) => (
