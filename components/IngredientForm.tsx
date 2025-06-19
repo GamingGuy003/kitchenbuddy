@@ -24,21 +24,8 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     const [brand, setBrand] = useState<string | undefined>(initialValues?.brand);
     const [open, setOpen] = useState<boolean>(initialValues?.open || false);
     const [ripeness, setRipeness] = useState<Maturity>(initialValues?.maturity || { lvl: RIPENESS.NONE, edited: new Date() });
+    const [freezeInterval, setFreezeInterval] = useState<number | undefined>(initialValues?.frozen);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-
-    useEffect(() => {
-        // Update form if initialValues change
-        if (initialValues) {
-            setName(initialValues.name || '');
-            setCategory(initialValues.category || '');
-            setLocation(initialValues.location || '');
-            setConfectionType(initialValues.confectionType || '');
-            setExpirationDate(initialValues.expirationDate);
-            setBrand(initialValues.brand || '');
-            setOpen(initialValues.open || false);
-            setRipeness(initialValues.maturity || { lvl: RIPENESS.NONE, edited: new Date ()});
-        }
-    }, [initialValues]);
 
     // datepicker mechanics
     const showDatePicker = () => setDatePickerVisibility(true);
@@ -63,7 +50,8 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             expirationDate,
             brand: brand || undefined,
             open: open || false,
-            maturity: ripeness
+            maturity: ripeness,
+            frozen: freezeInterval
         });
     };
 
@@ -75,6 +63,30 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     // when slider moves, modify ripeness as well as edited date
     const setRipenessAndDate = (ripeness: RIPENESS) => {
         setRipeness({ lvl: ripeness, edited: new Date() })
+    }
+
+    // save the interval between time of freezing and old expiration date
+    const freeze = () => {
+        if (!expirationDate) return;
+        const diffDays = dayDifference(expirationDate);
+        setFreezeInterval(diffDays);
+        const newExpiration = new Date(expirationDate);
+        newExpiration.setMonth(newExpiration.getMonth() + 6);
+        setExpirationDate(newExpiration)
+    }
+
+    // adds old interval to current date
+    const unfreeze = () => {
+        if (!expirationDate || !freezeInterval) return;
+        const newExpiration = new Date();
+        newExpiration.setDate(newExpiration.getDate() + freezeInterval);
+        setExpirationDate(newExpiration);
+        setFreezeInterval(undefined);
+    }
+
+    const setConfectionTypeFreeze = (confectionType?: string) => {
+        unfreeze();
+        setConfectionType(confectionType);
     }
 
     // alert the user that opened products my not last as long
@@ -124,11 +136,19 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 </Picker>
 
                 <Text style={styles.label}>Confection Type</Text>
-                <Picker selectedValue={confectionType} onValueChange={setConfectionType}>
-                    <Picker.Item label="Select Confection Type..." value="" />
-                    {CONFECTIONS.map(confection => <Picker.Item key={confection} label={confection} value={confection} />)}
-                </Picker>
-
+                <View style={styles.rowView}>
+                    <View style={{ flex: 3 }}>
+                        <Picker selectedValue={confectionType} onValueChange={setConfectionTypeFreeze}>
+                            <Picker.Item label="Select Confection Type..." value="" />
+                            {CONFECTIONS.map(confection => <Picker.Item key={confection} label={confection} value={confection} />)}
+                        </Picker>
+                    </View>
+                    { confectionType === 'Fresh' && expirationDate ?
+                    <View style={{flex: 1, marginTop: 10 }}>
+                        <Button title={freezeInterval ? 'unfreeze' : 'freeze'} onPress={ freezeInterval ? unfreeze : freeze}/>
+                    </View> : null }
+                </View>
+                
                 <Text style={styles.label}>Expiration Date</Text>
                 <Button title={expirationDate ? `Selected: ${expirationDate.toLocaleDateString()}` : "Pick Exact Date"} onPress={showDatePicker} />
                 <DateTimePickerModal

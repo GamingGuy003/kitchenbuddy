@@ -14,7 +14,8 @@ export interface Ingredient {
   addedDate: Date;
   brand?: string;
   open: boolean;
-  maturity: { lvl: RIPENESS, edited: Date }
+  maturity: { lvl: RIPENESS, edited: Date },
+  frozen?: number,
 };
 
 export type IngredientContextType = {
@@ -36,4 +37,6 @@ export interface IngredientData { // For form submissions
   brand?: string;
   open: boolean;
   maturity: Maturity
+  // time difference from time of freezing until old expiration date
+  frozen?: number
 };
