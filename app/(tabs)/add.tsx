@@ -23,6 +23,7 @@ export default function AddIngredientScreen() {
             confectionType: data.confectionType,
             expirationDate: data.expirationDate,
             brand: data.brand,
+            open: data.open,
         });
 
         Alert.alert("Success", "Ingredient added successfully!");

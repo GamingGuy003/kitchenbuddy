@@ -13,6 +13,7 @@ export interface Ingredient {
   expirationDate?: Date;
   addedDate: Date;
   brand?: string;
+  open: boolean;
 }
 
 export type IngredientContextType = {
@@ -30,4 +31,5 @@ export interface IngredientData { // For form submissions
   confectionType?: IngredientConfection;
   expirationDate?: Date;
   brand?: string;
+  open: boolean;
 }

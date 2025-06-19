@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import CheckBox from 'expo-checkbox';
 
 interface IngredientFormProps {
     initialValues?: Partial<IngredientData>;
@@ -18,7 +19,8 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     const [location, setLocation] = useState(initialValues?.location);
     const [confectionType, setConfectionType] = useState(initialValues?.confectionType);
     const [expirationDate, setExpirationDate] = useState<Date | undefined>(initialValues?.expirationDate ? new Date(initialValues.expirationDate) : undefined);
-    const [brand, setBrand] = useState<string | undefined>(initialValues?.brand)
+    const [brand, setBrand] = useState<string | undefined>(initialValues?.brand);
+    const [open, setOpen] = useState<boolean>(initialValues?.open || false);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     useEffect(() => {
@@ -29,7 +31,8 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             setLocation(initialValues.location || '');
             setConfectionType(initialValues.confectionType || '');
             setExpirationDate(initialValues.expirationDate ? new Date(initialValues.expirationDate) : undefined);
-            setBrand(initialValues.brand || '')
+            setBrand(initialValues.brand || '');
+            setOpen(initialValues.open || false);
         }
     }, [initialValues]);
 
@@ -54,15 +57,25 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             location: location || undefined,
             confectionType: confectionType || undefined,
             expirationDate,
-            brand: brand || undefined
+            brand: brand || undefined,
+            open: open || false
         });
     };
 
     return (
         <KeyboardAwareScrollView>
             <ScrollView contentContainerStyle={styles.container}>
-                <Text style={styles.label}>Name*</Text>
-                <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g., Apples" />
+                <View style={styles.rowView}>
+                    <View style={{ flex: 3 }}>
+                        <Text style={styles.label}>Name*</Text>
+                        <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g., Apples" />
+                    </View>
+                    <View style={{ alignItems: 'center', flex: 1 }}>
+                        <Text style={styles.label}>Open</Text>
+                        <CheckBox value={open} onValueChange={setOpen} style={{ marginTop: 5 }}/>
+                    </View>
+                </View>
+                    
 
                 <Text style={styles.label}>Brand</Text>
                 <TextInput style={styles.input} value={brand} onChangeText={setBrand} placeholder="e.g., Nestle" />
@@ -96,8 +109,8 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                     minimumDate={new Date()}
                 />
 
-                <Text style={styles.estimateLabel}>Or Estimate Expiry:</Text>
-                <View style={styles.estimateButtonsContainer}>
+                <Text style={styles.label}>Or Estimate Expiry:</Text>
+                <View style={styles.rowView}>
                     {EXPIRY_ESTIMATES.map((estimate: ExpiryEstimate) => (
                         <View key={estimate.label} style={styles.estimateButton}>
                             <Button title={estimate.label} onPress={() => handleSelectEstimate(estimate.days)} />
@@ -119,8 +132,8 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 16,
-        marginTop: 10,
-        marginBottom: 5
+        margin: 5,
+        fontWeight: '500'
     },
     input: {
         borderWidth: 1,
@@ -128,21 +141,18 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 10,
         borderRadius: 5,
-        height: 40 
+        flex: 2
     },
-    estimateLabel: {
-        marginTop: 15,
-        marginBottom: 5,
-        fontSize: 16
-    },
-    estimateButtonsContainer: {
+    rowView: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'space-around',
-        marginBottom: 20
+        justifyContent: 'space-evenly',
+        alignContent: 'flex-end',
+        flex: 1,
+        gap: 10,
     },
     estimateButton: {
-        margin: 5
+        flex: 1,
     },
     submitButtonContainer: {
         marginTop: 20

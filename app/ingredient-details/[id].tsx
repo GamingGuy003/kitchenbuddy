@@ -57,12 +57,7 @@ export default function IngredientDetailScreen() {
         if (ingredient) {
             updateIngredient({
                 ...ingredient,
-                name: data.name,
-                category: data.category,
-                location: data.location,
-                confectionType: data.confectionType,
-                expirationDate: data.expirationDate,
-                brand: data.brand
+                ...data
             });
             Alert.alert("Success", "Ingredient updated successfully!");
             router.back();
@@ -79,13 +74,13 @@ export default function IngredientDetailScreen() {
                     setIsNavigatingAway(true); // Set flag before delete and navigation
                     deleteIngredient(ingredient.id);
                     
+                    // navigate to the queries tab.
                     Alert.alert(
                         "Success",
                         "Ingredient deleted.",
                         [{ text: "OK", onPress: () => {
                             router.push('/(tabs)/queries');
                         }}]
-                        // router.push will navigate to the queries tab.
                     );
                 }}
             ]);
@@ -108,30 +103,26 @@ export default function IngredientDetailScreen() {
     }
     return (
         <KeyboardAwareScrollView>
-            <View style={styles.container}>
-                <IngredientForm
-
-                    initialValues={{
-                        name: ingredient.name,
-                        category: ingredient.category,
-                        location: ingredient.location,
-                        confectionType: ingredient.confectionType,
-                        expirationDate: ingredient.expirationDate,
-                    }}
-                    onSubmit={handleFormSubmit}
-                    submitButtonTitle="Save Changes"
-                />
-                <View style={styles.buttonContainer}>
-                    <View style={{marginTop: 10}}><Button title="Delete Ingredient" color="red" onPress={handleDeleteIngredient} /></View>
-                </View>
+            <IngredientForm
+                initialValues={{...ingredient}}
+                onSubmit={handleFormSubmit}
+                submitButtonTitle="Save Changes"
+            />
+            <View style={styles.deleteContainer}>
+                <Button title="Delete Ingredient" color="red" onPress={handleDeleteIngredient} />
             </View>
         </KeyboardAwareScrollView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { padding: 20 },
-    // label, input styles are now in IngredientForm
-    buttonContainer: { marginTop: 20 },
-    centered: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
+    deleteContainer: {
+        marginHorizontal: 20,
+    },
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20
+    },
 });

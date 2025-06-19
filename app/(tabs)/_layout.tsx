@@ -6,8 +6,8 @@ type IconName = keyof typeof Ionicons.glyphMap;
 
 export default function TabLayout() {
   return (
-    <Tabs
-      screenOptions={({ route }) => ({
+    <Tabs screenOptions={({ route }) => ({
+        animation: 'shift',
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: IconName = 'help-circle'; // Default icon
           // determine which icon to render
@@ -19,8 +19,8 @@ export default function TabLayout() {
         },
         tabBarActiveTintColor: '#063580',
         tabBarInactiveTintColor: 'gray',
-      })}
-    >
+      })
+    }>
       <Tabs.Screen
         name="add" // This will look for app/(tabs)/add.tsx
         options={{
