@@ -2,6 +2,9 @@ import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { Ingredient } from "../types/ingredient";
 import { router } from "expo-router";
 import dayDifference from "../constants/timeDifference";
+import { FontAwesome5 } from "@expo/vector-icons";
+
+type IconName = keyof typeof FontAwesome5.glyphmap;
 
 // renders a specific ingredient for the list view
 const renderIngredientItem = ({ item }: { item: Ingredient }) => {
@@ -16,12 +19,16 @@ const renderIngredientItem = ({ item }: { item: Ingredient }) => {
                 <Text>Category: {item.category ?? 'N/A'}</Text>
                 <Text>Added: {item.addedDate.toLocaleDateString()}</Text>
             </View>
+            { item.frozen ? 
+                <View style={styles.badge}>
+                    <FontAwesome5 name='snowflake' color={styles.frozenText.color}/>
+                    <Text style={styles.frozenText}>Frozen</Text>
+                </View> : null }
             { dayDifference(item.maturity.edited) >= 3 ? 
-                <View style={styles.ripeness}>
+                <View style={styles.badge}>
                     <Text style={styles.ripenessText}>!</Text>
                     <Text style={styles.ripenessText}>Check Ripeness</Text>
-                </View> : null
-            }
+                </View> : null }
         </View>
     </TouchableOpacity>)
 };
@@ -42,7 +49,7 @@ const styles = StyleSheet.create({
     touchable: {
         opacity: 100
     },
-    ripeness: {
+    badge: {
         justifyContent: 'center',
         alignItems: 'center',
         flex: 2,
@@ -50,6 +57,11 @@ const styles = StyleSheet.create({
     ripenessText: {
         textAlign: 'center',
         color: 'darkred',
+        fontWeight: '500'
+    },
+    frozenText: {
+        textAlign: 'center',
+        color: 'cornflowerblue',
         fontWeight: '500'
     },
     info: {
