@@ -16,16 +16,7 @@ export default function AddIngredientScreen() {
         }
 
         // add and save ingredient
-        addIngredient({
-            name: data.name,
-            category: data.category,
-            location: data.location,
-            confectionType: data.confectionType,
-            expirationDate: data.expirationDate,
-            brand: data.brand,
-            open: data.open,
-            maturity: data.maturity
-        });
+        addIngredient({...data});
 
         Alert.alert("Success", "Ingredient added successfully!");
         setFormKey(prevKey => prevKey + 1); // Change key to reset form
