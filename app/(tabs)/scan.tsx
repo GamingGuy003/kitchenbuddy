@@ -1,6 +1,6 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, View, ActivityIndicator, Alert } from 'react-native';
+import { Button, StyleSheet, Text, View, ActivityIndicator, Alert, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 
 // Define a type for the product data we expect (can be expanded)
@@ -8,6 +8,9 @@ interface ProductInfo {
   product_name?: string;
   brands?: string;
   categories?: string;
+  image_url?: string; // Standard image URL
+  image_front_url?: string; // Often a more specific front image
+  image_small_url?: string; // Sometimes a smaller version is available
   // Add other fields you might want to use from the API response
 }
 
@@ -131,6 +134,13 @@ export default function ScanScreen() {
 
       {productInfo && !isLoading && (
         <View style={styles.centeredContent}>
+          { (productInfo.image_front_url || productInfo.image_url || productInfo.image_small_url) && (
+            <Image
+              style={styles.productImage}
+              source={{ uri: productInfo.image_front_url || productInfo.image_url || productInfo.image_small_url }}
+              resizeMode="contain" // Or "cover", "stretch", etc.
+            />
+          )}
           <Text style={styles.productName}>{productInfo.product_name || 'N/A'}</Text>
           {productInfo.brands && <Text>Brand: {productInfo.brands}</Text>}
           <View style={styles.buttonGroup}>
@@ -188,5 +198,12 @@ const styles = StyleSheet.create({
   buttonGroup: {
     marginTop: 20,
     width: '80%', // Adjust as needed
+  },
+  productImage: {
+    width: 150,
+    height: 150,
+    marginBottom: 15,
+    borderWidth: 1, // Optional: for a border around the image
+    borderColor: '#ddd', // Optional: border color
   }
 });
