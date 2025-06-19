@@ -119,9 +119,9 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                         <Text style={styles.label}>Name*</Text>
                         <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g., Apples" />
                     </View>
-                    <View style={{ alignItems: 'center', flex: 1 }}>
+                    <View style={styles.checkBoxView}>
                         <Text style={styles.label}>Open</Text>
-                        <CheckBox value={open} onValueChange={handleOpened} style={{ marginTop: 5 }}/>
+                        <CheckBox value={open} onValueChange={handleOpened}/>
                     </View>
                 </View>
                     
@@ -208,6 +208,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderRadius: 5,
         flex: 2
+    },
+    checkBoxView: {
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        rowGap: 10
     },
     rowView: {
         flexDirection: 'row',
