@@ -11,7 +11,7 @@ export default function IngredientDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
     const navigation = useNavigation(); // Get navigation object
-    const { getIngredientById, updateIngredient, deleteIngredient, addIngredient } = useIngredients();
+    const { getIngredientById, updateIngredient, deleteIngredient } = useIngredients();
 
     const [ingredient, setIngredient] = useState<Ingredient | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -19,13 +19,13 @@ export default function IngredientDetailScreen() {
 
     useEffect(() => {
         if (id) {
-        // If we are in the process of navigating away (e.g., after delete), do nothing.
-        if (isNavigatingAway) {
-            setIsLoading(false); // Ensure loading state is false if we are bailing out
-            return;
-        }
+            // If we are in the process of navigating away (e.g., after delete), do nothing.
+            if (isNavigatingAway) {
+                setIsLoading(false); // Ensure loading state is false if we are bailing out
+                return;
+            }
 
-        setIsLoading(true);
+            setIsLoading(true);
         
             const fetchedIngredient = getIngredientById(id);
             if (fetchedIngredient) {
@@ -46,18 +46,11 @@ export default function IngredientDetailScreen() {
         }
         setIsLoading(false);
 
-    }, [id, getIngredientById, navigation, router, isNavigatingAway]); // Add navigation and router to dependencies
+    }, [id, getIngredientById, navigation, router, isNavigatingAway]);
 
     const handleFormSubmit = (data: IngredientData) => {
         if (!data.name || !data.name.trim()) {
             Alert.alert("Validation Error", "Ingredient name is required.");
-            return;
-        }
-        // The IngredientForm ensures category, location, confectionType are strings or undefined.
-        // For updating, we need to ensure they are strings if the ingredient requires them.
-        // The Ingredient type implies they are required strings.
-        if (!data.category || !data.location || !data.confectionType) {
-            Alert.alert("Validation Error", "Category, Location, and Confection Type are required.");
             return;
         }
 
@@ -65,10 +58,11 @@ export default function IngredientDetailScreen() {
             updateIngredient({
                 ...ingredient,
                 name: data.name,
-                category: data.category, // IngredientForm passes string or undefined, ensure it's string
-                location: data.location, // IngredientForm passes string or undefined, ensure it's string
-                confectionType: data.confectionType, // IngredientForm passes string or undefined, ensure it's string
+                category: data.category,
+                location: data.location,
+                confectionType: data.confectionType,
                 expirationDate: data.expirationDate,
+                brand: data.brand
             });
             Alert.alert("Success", "Ingredient updated successfully!");
             router.back();

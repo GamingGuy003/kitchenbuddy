@@ -4,7 +4,8 @@ import { Ingredient, IngredientCategory, IngredientConfection, IngredientLocatio
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { FlatList, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
+import renderIngredientItem from '../../components/renderIngredient';
 
 type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType';
 type Filter = IngredientCategory | IngredientConfection | IngredientLocation | undefined;
@@ -68,19 +69,6 @@ export default function QueryScreen() {
         }));
     };
 
-
-    // renders a specific ingredient
-    const renderIngredientItem = ({ item }: { item: Ingredient }) => (
-        <TouchableOpacity onPress={() => router.push(`/ingredient-details/${item.id}`)}>
-            <View style={styles.ingredientView}>
-                <Text style={styles.ingredientTitle}>{item.name}</Text>
-                { item.expirationDate && <Text>Expires: {item.expirationDate.toLocaleDateString()}</Text> }
-                <Text>Category: {item.category ?? 'N/A'}</Text>
-                <Text>Added: {item.addedDate.toLocaleDateString()}</Text>
-            </View>
-        </TouchableOpacity>
-    );
-
     // filterpricker element
     const RenderFilterPicker = () => {
         switch (queryType) {
@@ -126,7 +114,7 @@ export default function QueryScreen() {
 
     // renders the whole page
     return (
-        <View style={styles.mainView}>
+        <View style={styles.container}>
             <Picker selectedValue={queryType} onValueChange={(itemValue: QueryType) => { setQueryType(itemValue); setFilter(''); }}>
                 <Picker.Item label="Most Recently Added" value='recentlyAdded' />
                 <Picker.Item label="Missing Data" value="missingData" />
@@ -147,8 +135,9 @@ export default function QueryScreen() {
 }
 
 const styles = StyleSheet.create({
-    mainView: {
-        flex: 1
+    container: {
+        flex: 1,
+        padding: 10
     },
     listEmptyText: {
         textAlign: 'center',
@@ -156,8 +145,8 @@ const styles = StyleSheet.create({
     },
     listSectionHeader: {
         fontWeight: 'bold',
-        fontSize: 32,
-        textAlign: 'center'
+        fontSize: 24,
+        paddingVertical: 5
     },
     searchInput: {
         height: 40,
@@ -167,13 +156,4 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         margin: 10,
     },
-    ingredientView: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc'
-    },
-    ingredientTitle: {
-        fontSize: 16,
-        fontWeight: 'bold'
-    }
 });

@@ -18,22 +18,24 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     const [location, setLocation] = useState(initialValues?.location);
     const [confectionType, setConfectionType] = useState(initialValues?.confectionType);
     const [expirationDate, setExpirationDate] = useState<Date | undefined>(initialValues?.expirationDate ? new Date(initialValues.expirationDate) : undefined);
+    const [brand, setBrand] = useState<string | undefined>(initialValues?.brand)
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     useEffect(() => {
-        // Update form if initialValues change (e.g. when navigating to edit an already loaded item)
+        // Update form if initialValues change
         if (initialValues) {
             setName(initialValues.name || '');
             setCategory(initialValues.category || '');
             setLocation(initialValues.location || '');
             setConfectionType(initialValues.confectionType || '');
             setExpirationDate(initialValues.expirationDate ? new Date(initialValues.expirationDate) : undefined);
+            setBrand(initialValues.brand || '')
         }
     }, [initialValues]);
 
+    // datepicker mechanics
     const showDatePicker = () => setDatePickerVisibility(true);
     const hideDatePicker = () => setDatePickerVisibility(false);
-
     const handleConfirmDate = (date: Date) => {
         setExpirationDate(date);
         hideDatePicker();
@@ -52,6 +54,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             location: location || undefined,
             confectionType: confectionType || undefined,
             expirationDate,
+            brand: brand || undefined
         });
     };
 
@@ -60,6 +63,9 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             <ScrollView contentContainerStyle={styles.container}>
                 <Text style={styles.label}>Name*</Text>
                 <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g., Apples" />
+
+                <Text style={styles.label}>Brand</Text>
+                <TextInput style={styles.input} value={brand} onChangeText={setBrand} placeholder="e.g., Nestle" />
 
                 <Text style={styles.label}>Category</Text>
                 <Picker selectedValue={category} onValueChange={setCategory}>

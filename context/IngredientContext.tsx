@@ -10,6 +10,7 @@ export const IngredientProvider = ({ children }: { children: ReactNode }) => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 
   useEffect(() => {
+    // function to load ingredients from storage
     const loadIngredients = async () => {
       try {
         const storedIngredients = await AsyncStorage.getItem(INGREDIENTS_STORAGE_KEY);
@@ -28,6 +29,7 @@ export const IngredientProvider = ({ children }: { children: ReactNode }) => {
     loadIngredients();
   }, []);
 
+  // saves ingredients to storage
   const saveIngredients = async (newIngredients: Ingredient[]) => {
     try {
       setIngredients(newIngredients);
@@ -37,6 +39,7 @@ export const IngredientProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // construct new ingredient with new id and date
   const addIngredient = (ingredient: Omit<Ingredient, 'id' | 'addedDate'>) => {
     const newIngredient: Ingredient = {
       ...ingredient,
@@ -46,16 +49,19 @@ export const IngredientProvider = ({ children }: { children: ReactNode }) => {
     saveIngredients([...ingredients, newIngredient]);
   };
 
+  // updates existing ingredient
   const updateIngredient = (updatedIngredient: Ingredient) => {
     const newIngredients = ingredients.map(i => (i.id === updatedIngredient.id ? updatedIngredient : i));
     saveIngredients(newIngredients);
   };
 
+  // delete ingredient from storage
   const deleteIngredient = (id: string) => {
     const newIngredients = ingredients.filter(i => i.id !== id);
     saveIngredients(newIngredients);
   };
 
+  // get ingredient by id
   const getIngredientById = (id: string) => {
     return ingredients.find(i => i.id === id);
   }

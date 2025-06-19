@@ -10,13 +10,11 @@ export default function TabLayout() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: IconName = 'help-circle'; // Default icon
-          if (route.name === 'add') { 
-            iconName = focused ? 'add-circle' : 'add-circle-outline';
-          } else if (route.name === 'expiringSoon') { 
-            iconName = focused ? 'alert-circle' : 'alert-circle-outline';
-          } else if (route.name === 'queries') { 
-            iconName = focused ? 'search' : 'search-outline';
-          }
+          // determine which icon to render
+          if (route.name === 'add') iconName = focused ? 'add-circle' : 'add-circle-outline'
+          else if (route.name === 'expiringSoon') iconName = focused ? 'alert-circle' : 'alert-circle-outline'
+          else if (route.name === 'queries') iconName = focused ? 'search' : 'search-outline'
+          
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#063580',

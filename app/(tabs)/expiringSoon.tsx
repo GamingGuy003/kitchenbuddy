@@ -5,6 +5,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import debounce from 'lodash.debounce';
+import renderIngredientItem from '../../components/renderIngredient';
 
 export default function ExpiringSoonScreen() {
     const { ingredients } = useIngredients();
@@ -43,7 +44,6 @@ export default function ExpiringSoonScreen() {
 
         return Object.entries(groups).map((group) => {
             const expiryDate = new Date(group[0]);
-            console.log(expiryDate)
             expiryDate.setHours(0,0,0,0); // Normalize expiry date
             const diffTime = expiryDate.getTime() - today.getTime();
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -54,17 +54,7 @@ export default function ExpiringSoonScreen() {
             .map((group) => ({ title: group.title.toString(), data: group.data }));
     }, [ingredients, search, daysThreshold]);
 
-    const renderIngredientItem = ({ item }: { item: Ingredient }) => (
-        <TouchableOpacity onPress={() => router.push(`/ingredient-details/${item.id}`)}>
-            <View style={styles.itemContainer}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text>Expires: {item.expirationDate ? item.expirationDate.toLocaleDateString() : 'N/A'}</Text>
-                <Text>Added: {item.addedDate.toLocaleDateString()}</Text>
-            </View>
-        </TouchableOpacity>
-    );
-
-    // debounce such taht slider doesnt lag out application
+    // debounce such that slider doesnt lag out application
     const debounceUpdate = useCallback(
         debounce((value: number) => {
             setDaysThreshold(value)
@@ -115,6 +105,7 @@ const styles = StyleSheet.create({
     listSectionHeader: {
         fontWeight: 'bold',
         fontSize: 24,
+        paddingVertical: 5
     },
     sliderMarker: {
         paddingTop: 15,

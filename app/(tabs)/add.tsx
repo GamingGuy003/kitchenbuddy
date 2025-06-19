@@ -4,7 +4,7 @@ import { IngredientData } from '../../types/ingredient';
 import React, { useState } from 'react';
 import { Alert, View } from 'react-native';
 
-function AddIngredientScreen() {
+export default function AddIngredientScreen() {
     const { addIngredient } = useIngredients();
     // Key to force re-render of IngredientForm after submission, effectively resetting it
     const [formKey, setFormKey] = useState(0);
@@ -15,12 +15,14 @@ function AddIngredientScreen() {
             return;
         }
 
+        // add and save ingredient
         addIngredient({
             name: data.name,
             category: data.category,
             location: data.location,
             confectionType: data.confectionType,
             expirationDate: data.expirationDate,
+            brand: data.brand,
         });
 
         Alert.alert("Success", "Ingredient added successfully!");
@@ -33,5 +35,3 @@ function AddIngredientScreen() {
         </View>
     );
 }
-
-export default AddIngredientScreen;
