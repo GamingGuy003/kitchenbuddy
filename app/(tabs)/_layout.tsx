@@ -39,6 +39,12 @@ export default function TabLayout() {
           title: 'Expiring Soon',
         }}
       />
+      <Tabs.Screen
+        name="camera" // This will look for app/(tabs)/expiringSoon.tsx
+        options={{
+          title: 'camera',
+        }}
+      />
     </Tabs>
   );
 }
