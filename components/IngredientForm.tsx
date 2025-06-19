@@ -1,11 +1,13 @@
-import { EXPIRY_ESTIMATES, ExpiryEstimate, CATEGORIES, LOCATIONS, CONFECTIONS } from '../constants/ingredientProperties';
-import { IngredientData } from '../types/ingredient'; // Assuming IngredientData is the type for form data
+import { EXPIRY_ESTIMATES, ExpiryEstimate, CATEGORIES, LOCATIONS, CONFECTIONS, RIPENESS } from '../constants/ingredientProperties';
+import { IngredientData, Maturity } from '../types/ingredient'; // Assuming IngredientData is the type for form data
 import { Picker } from '@react-native-picker/picker';
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CheckBox from 'expo-checkbox';
+import Slider from '@react-native-community/slider';
+import dayDifference from '../constants/timeDifference';
 
 interface IngredientFormProps {
     initialValues?: Partial<IngredientData>;
@@ -21,6 +23,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     const [expirationDate, setExpirationDate] = useState<Date | undefined>(initialValues?.expirationDate ? new Date(initialValues.expirationDate) : undefined);
     const [brand, setBrand] = useState<string | undefined>(initialValues?.brand);
     const [open, setOpen] = useState<boolean>(initialValues?.open || false);
+    const [ripeness, setRipeness] = useState<Maturity>(initialValues?.maturity || { lvl: RIPENESS.NONE, edited: new Date ()});
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     useEffect(() => {
@@ -33,6 +36,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             setExpirationDate(initialValues.expirationDate ? new Date(initialValues.expirationDate) : undefined);
             setBrand(initialValues.brand || '');
             setOpen(initialValues.open || false);
+            setRipeness(initialValues.maturity || { lvl: RIPENESS.NONE, edited: new Date ()});
         }
     }, [initialValues]);
 
@@ -58,9 +62,22 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             confectionType: confectionType || undefined,
             expirationDate,
             brand: brand || undefined,
-            open: open || false
+            open: open || false,
+            maturity: ripeness
         });
     };
+
+    // converts the enum variants into a readable string
+    const getRipenessText = () => {
+        return RIPENESS[ripeness.lvl].charAt(0) + RIPENESS[ripeness.lvl].toLocaleLowerCase().slice(1)
+    };
+
+    // when slider moves, modify ripeness as well as edited date
+    const setRipenessAndDate = (ripeness: RIPENESS) => {
+        const date = new Date();
+        date.setHours(0,0,0,0);
+        setRipeness({ lvl: ripeness, edited: date })
+    }
 
     // alert the user that opened products my not last as long
     const handleOpened = (value: boolean) => {
@@ -86,6 +103,15 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
 
                 <Text style={styles.label}>Brand</Text>
                 <TextInput style={styles.input} value={brand} onChangeText={setBrand} placeholder="e.g., Nestle" />
+
+                <Text style={styles.label}>Ripeness: {getRipenessText()} { dayDifference(ripeness.edited) >= 3 ? '(Checking required)' : null}</Text>
+                <View style={styles.rowView}>
+                    <Slider step={1} minimumValue={-1} maximumValue={3} value={ripeness.lvl} onValueChange={setRipenessAndDate} style={{ flex: 1 }}/>
+                    <Button title={`Confirm ${getRipenessText()}`} onPress={() => {
+                        setRipenessAndDate(ripeness.lvl);
+                        Alert.alert('Ripeness confirmed', `Ripeness is still ${getRipenessText()}`);
+                    }}/>
+                </View>
 
                 <Text style={styles.label}>Category</Text>
                 <Picker selectedValue={category} onValueChange={setCategory}>
