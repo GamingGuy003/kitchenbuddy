@@ -1,10 +1,12 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
-export default function camera() {
+export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
+  const [scannedData, setScannedData] = useState<string | null>(null);
 
+  // Function to handle the scanned barcode
   if (!permission) {
     // Camera permissions are still loading.
     return <View />;
@@ -20,10 +22,22 @@ export default function camera() {
     );
   }
 
+  const handleBarcodeScanned = ({ type, data }: { type: string, data: string }) => {
+    setScannedData(data);
+    console.log(`Barcodedata: ${data}`);
+    console.log(`Barcodetype: ${type}`);
+  };
+
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera}>
-      </CameraView>
+      <CameraView
+        style={styles.camera}
+        barcodeScannerSettings={{
+          barcodeTypes: ["ean13"],
+        }}
+        onBarcodeScanned={scannedData ? undefined : handleBarcodeScanned} // Stop scanning after one scan
+      />
+      {scannedData && <Text style={styles.scannedDataText}>Scanned Data: {scannedData}</Text>}
     </View>
   );
 }
@@ -56,4 +70,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+  scannedDataText: {
+    textAlign: 'center',
+    color: 'black', // Adjust color as needed for visibility
+    padding: 10,
+  }
 });
