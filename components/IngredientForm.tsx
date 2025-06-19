@@ -38,6 +38,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             setBrand(initialValues.brand || '');
             setOpen(initialValues.open || false);
             setRipeness(initialValues.maturity || { lvl: RIPENESS.NONE, edited: new Date ()});
+            setFreezeInterval(initialValues.frozen);
         }
     }, [initialValues]);
 
