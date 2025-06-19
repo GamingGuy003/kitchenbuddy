@@ -1,4 +1,4 @@
-import { CATEGORIES, CONFECTIONS, LOCATIONS } from "../constants/ingredientProperties";
+import { CATEGORIES, CONFECTIONS, LOCATIONS, RIPENESS } from "../constants/ingredientProperties";
 
 export type IngredientCategory = typeof CATEGORIES[number];
 export type IngredientLocation = typeof LOCATIONS[number];
@@ -14,7 +14,8 @@ export interface Ingredient {
   addedDate: Date;
   brand?: string;
   open: boolean;
-}
+  maturity: { lvl: RIPENESS, edited: Date }
+};
 
 export type IngredientContextType = {
   ingredients: Ingredient[];
@@ -24,6 +25,8 @@ export type IngredientContextType = {
   getIngredientById: (id: string) => Ingredient | undefined;
 };
 
+export type Maturity = { lvl: RIPENESS, edited: Date };
+
 export interface IngredientData { // For form submissions
   name: string;
   category?: IngredientCategory;
@@ -32,4 +35,5 @@ export interface IngredientData { // For form submissions
   expirationDate?: Date;
   brand?: string;
   open: boolean;
-}
+  maturity: Maturity
+};

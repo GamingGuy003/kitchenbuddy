@@ -28,15 +28,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="queries" // This will look for app/(tabs)/queries.tsx
-        options={{
-          title: 'Queries',
-        }}
-      />
-      <Tabs.Screen
         name="expiringSoon" // This will look for app/(tabs)/expiringSoon.tsx
         options={{
           title: 'Expiring Soon',
+        }}
+      />
+      <Tabs.Screen
+        name="queries" // This will look for app/(tabs)/queries.tsx
+        options={{
+          title: 'Queries',
         }}
       />
     </Tabs>

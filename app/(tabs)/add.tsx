@@ -24,6 +24,7 @@ export default function AddIngredientScreen() {
             expirationDate: data.expirationDate,
             brand: data.brand,
             open: data.open,
+            maturity: data.maturity
         });
 
         Alert.alert("Success", "Ingredient added successfully!");

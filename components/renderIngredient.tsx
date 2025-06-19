@@ -1,22 +1,27 @@
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { Ingredient } from "../types/ingredient";
 import { router } from "expo-router";
-import { FontAwesome5 } from "@expo/vector-icons";
+import dayDifference from "../constants/timeDifference";
 
-type IconName = keyof typeof FontAwesome5.glyphMap;
-
-// renders a specific ingredient
+// renders a specific ingredient for the list view
 const renderIngredientItem = ({ item }: { item: Ingredient }) => {
-    const opened: IconName = item.open ? 'box-open' : 'box';
     return (<TouchableOpacity onPress={() => router.push(`/ingredient-details/${item.id}`)} style={styles.touchable}>
         <View style={styles.ingredientView}>
-            <Text style={styles.ingredientTitle}>{item.name}</Text>
-            <View style={styles.row}>
-                { item.expirationDate && <Text>Expires: {item.expirationDate.toLocaleDateString()} </Text> }
-                {item.open ? <Text>(Open)</Text> : null}
+            <View style={styles.info}>
+                <Text style={styles.ingredientTitle}>{item.name}</Text>
+                <View style={{ flexDirection: 'row' }}>
+                    { item.expirationDate && <Text>Expires: {item.expirationDate.toLocaleDateString()} </Text> }
+                    {item.open ? <Text>(Open)</Text> : null}
+                </View>
+                <Text>Category: {item.category ?? 'N/A'}</Text>
+                <Text>Added: {item.addedDate.toLocaleDateString()}</Text>
             </View>
-            <Text>Category: {item.category ?? 'N/A'}</Text>
-            <Text>Added: {item.addedDate.toLocaleDateString()}</Text>
+            { dayDifference(item.maturity.edited) >= 3 ? 
+                <View style={styles.ripeness}>
+                    <Text style={styles.ripenessText}>!</Text>
+                    <Text style={styles.ripenessText}>Check Ripeness</Text>
+                </View> : null
+            }
         </View>
     </TouchableOpacity>)
 };
@@ -28,6 +33,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: '#ddd',
+        flexDirection: 'row',
     },
     ingredientTitle: {
         fontSize: 16,
@@ -36,8 +42,18 @@ const styles = StyleSheet.create({
     touchable: {
         opacity: 100
     },
-    row: {
-        flexDirection: 'row'
+    ripeness: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 2,
+    },
+    ripenessText: {
+        textAlign: 'center',
+        color: 'darkred',
+        fontWeight: '500'
+    },
+    info: {
+        flex: 8
     }
 })
 

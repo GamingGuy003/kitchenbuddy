@@ -1,4 +1,4 @@
-import { CATEGORIES, CONFECTIONS, LOCATIONS } from '../../constants/ingredientProperties';
+import { CATEGORIES, CONFECTIONS, LOCATIONS, RIPENESS } from '../../constants/ingredientProperties';
 import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient, IngredientCategory, IngredientConfection, IngredientLocation } from '../../types/ingredient';
 import { Picker } from '@react-native-picker/picker';
@@ -6,14 +6,13 @@ import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { FlatList, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import renderIngredientItem from '../../components/renderIngredient';
+import dayDifference from '../../constants/timeDifference';
 
-type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType';
+type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType' | 'ripenessCheck';
 type Filter = IngredientCategory | IngredientConfection | IngredientLocation | undefined;
 
 export default function QueryScreen() {
     const { ingredients } = useIngredients();
-    const router = useRouter();
-
     // type of query
     const [queryType, setQueryType] = useState<QueryType>('recentlyAdded');
     // filter selection
@@ -25,6 +24,10 @@ export default function QueryScreen() {
     const filteredIngredients = useMemo(() => {
         let result: Ingredient[] = [];
         switch (queryType) {
+            case 'ripenessCheck':
+                // only show items with a ripeness status and more than 3 days since last check
+                result = ingredients.filter((i) => i.maturity.lvl !== RIPENESS.NONE && dayDifference(i.maturity.edited) >= 3);
+                break;
             case 'missingData':
                 result = ingredients.filter(i => !i.category || !i.location || !i.confectionType || !i.expirationDate);
                 break;
@@ -54,6 +57,7 @@ export default function QueryScreen() {
             confectionType: (ingredient: Ingredient) => ingredient.confectionType ?? 'Unassigned',
             recentlyAdded: (() => 'Unassigned'),
             missingData: (() => 'Unassigned'),
+            ripenessCheck: (() => 'Unassigned'),
         }[queryType];
 
         const grouped: Record<string, Ingredient[]> = {};
@@ -95,7 +99,7 @@ export default function QueryScreen() {
     // listing element
     const RenderIngredientList = () => {
         // if querytype has subcategories and no filter has been chosen, show section list with all items
-        if (filter === '' && queryType != 'missingData' && queryType != 'recentlyAdded') {
+        if (filter === '' && queryType != 'missingData' && queryType != 'recentlyAdded' && queryType != 'ripenessCheck') {
             return <SectionList
                 sections={groupItemsByField()}
                 keyExtractor={(item) => item.id}
@@ -116,6 +120,7 @@ export default function QueryScreen() {
     return (
         <View style={styles.container}>
             <Picker selectedValue={queryType} onValueChange={(itemValue: QueryType) => { setQueryType(itemValue); setFilter(''); }}>
+                <Picker.Item label="Ripeness Check due" value="ripenessCheck" />
                 <Picker.Item label="Most Recently Added" value='recentlyAdded' />
                 <Picker.Item label="Missing Data" value="missingData" />
                 <Picker.Item label="By Location" value="location" />

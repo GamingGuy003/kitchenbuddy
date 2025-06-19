@@ -6,6 +6,7 @@ import { SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from
 import Slider from '@react-native-community/slider';
 import debounce from 'lodash.debounce';
 import renderIngredientItem from '../../components/renderIngredient';
+import dayDifference from '../../constants/timeDifference';
 
 export default function ExpiringSoonScreen() {
     const { ingredients } = useIngredients();
@@ -23,11 +24,8 @@ export default function ExpiringSoonScreen() {
             if (!ingredient.expirationDate) return false;
             // if not matching search term
             if (!ingredient.name.toLocaleLowerCase().includes(search.toLowerCase())) return false;
-
-            const expiryDate = new Date(ingredient.expirationDate);
-            expiryDate.setHours(0,0,0,0); // Normalize expiry date
-            const diffTime = expiryDate.getTime() - today.getTime();
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            const diffDays = dayDifference(ingredient.expirationDate, today);
 
             // check which items
             return (daysThreshold !== null) ? diffDays <= daysThreshold : false;
