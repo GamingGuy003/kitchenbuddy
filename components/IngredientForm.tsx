@@ -2,7 +2,7 @@ import { EXPIRY_ESTIMATES, ExpiryEstimate, CATEGORIES, LOCATIONS, CONFECTIONS } 
 import { IngredientData } from '../types/ingredient'; // Assuming IngredientData is the type for form data
 import { Picker } from '@react-native-picker/picker';
 import React, { useEffect, useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CheckBox from 'expo-checkbox';
@@ -62,6 +62,13 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
         });
     };
 
+    // alert the user that opened products my not last as long
+    const handleOpened = (value: boolean) => {
+        // notify only if changed from unopen to open
+        if (!open && value) Alert.alert('Notice', 'Opened products may not last as long; Possibly adjust expiration date');
+        setOpen(value)
+    }
+
     return (
         <KeyboardAwareScrollView>
             <ScrollView contentContainerStyle={styles.container}>
@@ -72,7 +79,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                     </View>
                     <View style={{ alignItems: 'center', flex: 1 }}>
                         <Text style={styles.label}>Open</Text>
-                        <CheckBox value={open} onValueChange={setOpen} style={{ marginTop: 5 }}/>
+                        <CheckBox value={open} onValueChange={handleOpened} style={{ marginTop: 5 }}/>
                     </View>
                 </View>
                     
