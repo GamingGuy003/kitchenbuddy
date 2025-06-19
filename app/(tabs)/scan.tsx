@@ -11,7 +11,7 @@ interface ProductInfo {
   // Add other fields you might want to use from the API response
 }
 
-export default function CameraScreen() {
+export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scannedData, setScannedData] = useState<string | null>(null);
   const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);

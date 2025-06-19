@@ -14,6 +14,7 @@ export default function TabLayout() {
           if (route.name === 'add') iconName = focused ? 'add-circle' : 'add-circle-outline'
           else if (route.name === 'expiringSoon') iconName = focused ? 'alert-circle' : 'alert-circle-outline'
           else if (route.name === 'queries') iconName = focused ? 'search' : 'search-outline'
+          else if (route.name === 'scan') iconName = focused ? 'barcode' : 'barcode-outline'
           
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -40,9 +41,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="camera" // This will look for app/(tabs)/expiringSoon.tsx
+        name="scan" // This will look for app/(tabs)/expiringSoon.tsx
         options={{
-          title: 'Camera',
+          title: 'Scan',
         }}
       />
     </Tabs>
