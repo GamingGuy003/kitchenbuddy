@@ -23,7 +23,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     const [expirationDate, setExpirationDate] = useState<Date | undefined>(initialValues?.expirationDate ? new Date(initialValues.expirationDate) : undefined);
     const [brand, setBrand] = useState<string | undefined>(initialValues?.brand);
     const [open, setOpen] = useState<boolean>(initialValues?.open || false);
-    const [ripeness, setRipeness] = useState<Maturity>(initialValues?.maturity || { lvl: RIPENESS.NONE, edited: new Date ()});
+    const [ripeness, setRipeness] = useState<Maturity>(initialValues?.maturity || { lvl: RIPENESS.NONE, edited: new Date() });
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     useEffect(() => {
@@ -33,7 +33,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             setCategory(initialValues.category || '');
             setLocation(initialValues.location || '');
             setConfectionType(initialValues.confectionType || '');
-            setExpirationDate(initialValues.expirationDate ? new Date(initialValues.expirationDate) : undefined);
+            setExpirationDate(initialValues.expirationDate);
             setBrand(initialValues.brand || '');
             setOpen(initialValues.open || false);
             setRipeness(initialValues.maturity || { lvl: RIPENESS.NONE, edited: new Date ()});
@@ -74,9 +74,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
 
     // when slider moves, modify ripeness as well as edited date
     const setRipenessAndDate = (ripeness: RIPENESS) => {
-        const date = new Date();
-        date.setHours(0,0,0,0);
-        setRipeness({ lvl: ripeness, edited: date })
+        setRipeness({ lvl: ripeness, edited: new Date() })
     }
 
     // alert the user that opened products my not last as long

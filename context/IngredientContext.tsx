@@ -15,10 +15,11 @@ export const IngredientProvider = ({ children }: { children: ReactNode }) => {
       try {
         const storedIngredients = await AsyncStorage.getItem(INGREDIENTS_STORAGE_KEY);
         if (storedIngredients) {
-          const parsedIngredients = JSON.parse(storedIngredients).map((i: any) => ({
+          const parsedIngredients: Ingredient[] = JSON.parse(storedIngredients).map((i: any) => ({
             ...i,
             expirationDate: i.expirationDate ? new Date(i.expirationDate) : undefined,
             addedDate: new Date(i.addedDate),
+            maturity: { ...i.maturity, edited: new Date(i.maturity.edited) }
           }));
           setIngredients(parsedIngredients);
         }
