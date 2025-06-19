@@ -16,7 +16,6 @@ export default function ExpiringSoonScreen() {
 
     const expiringIngredients = useMemo(() => {        
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
 
         // remove any ingredients not matching the chosen expiry time
         const filteredIngredients = ingredients.filter((ingredient) => {
@@ -41,10 +40,7 @@ export default function ExpiringSoonScreen() {
         }
 
         return Object.entries(groups).map((group) => {
-            const expiryDate = new Date(group[0]);
-            expiryDate.setHours(0,0,0,0); // Normalize expiry date
-            const diffTime = expiryDate.getTime() - today.getTime();
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffDays = dayDifference(new Date(group[0]), today);
             return {
                 title: diffDays,
                 data: group[1]
