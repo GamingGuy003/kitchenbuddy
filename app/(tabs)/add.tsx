@@ -1,13 +1,28 @@
 import IngredientForm from '../../components/IngredientForm';
 import { useIngredients } from '../../context/IngredientContext';
 import { IngredientData } from '../../types/ingredient';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function AddIngredientScreen() {
     const { addIngredient } = useIngredients();
+    const params = useLocalSearchParams<{ name?: string, brand?: string, category?: string }>();
     // Key to force re-render of IngredientForm after submission, effectively resetting it
     const [formKey, setFormKey] = useState(0);
+    const [initialData, setInitialData] = useState<Partial<IngredientData>>({});
+
+    useEffect(() => {
+        // Pre-fill form if parameters are passed from camera scan
+        const newInitialData: Partial<IngredientData> = {};
+        if (params.name) newInitialData.name = params.name;
+        if (params.brand) newInitialData.brand = params.brand;
+        // Example for category, adjust as per your IngredientData type
+        // if (params.category) newInitialData.category = params.category as any;
+        
+        setInitialData(newInitialData);
+        // Incrementing formKey here would make the form re-initialize with new params if the screen is already mounted.
+    }, [params.name, params.brand, params.category]); // Depend on specific params
 
     const handleAddIngredient = (data: IngredientData) => {
         if (!data.name || !data.name.trim()) {
@@ -29,11 +44,17 @@ export default function AddIngredientScreen() {
 
         Alert.alert("Success", "Ingredient added successfully!");
         setFormKey(prevKey => prevKey + 1); // Change key to reset form
+        setInitialData({}); // Clear initial data after submission so it doesn't persist for manual adds
     };
 
     return (
         <View style={{flex: 1}}>
-            <IngredientForm key={formKey} onSubmit={handleAddIngredient} submitButtonTitle="Add Ingredient" />
+            <IngredientForm
+                key={formKey}
+                onSubmit={handleAddIngredient}
+                submitButtonTitle="Add Ingredient"
+                initialValues={initialData} // Pass initial values to the form
+            />
         </View>
     );
 }

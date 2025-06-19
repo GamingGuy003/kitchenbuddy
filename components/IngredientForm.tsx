@@ -27,6 +27,20 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     const [freezeInterval, setFreezeInterval] = useState<number | undefined>(initialValues?.frozen);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
+    useEffect(() => {
+        // Update form if initialValues change
+        if (initialValues) {
+            setName(initialValues.name || '');
+            setCategory(initialValues.category || '');
+            setLocation(initialValues.location || '');
+            setConfectionType(initialValues.confectionType || '');
+            setExpirationDate(initialValues.expirationDate);
+            setBrand(initialValues.brand || '');
+            setOpen(initialValues.open || false);
+            setRipeness(initialValues.maturity || { lvl: RIPENESS.NONE, edited: new Date ()});
+        }
+    }, [initialValues]);
+
     // datepicker mechanics
     const showDatePicker = () => setDatePickerVisibility(true);
     const hideDatePicker = () => setDatePickerVisibility(false);
