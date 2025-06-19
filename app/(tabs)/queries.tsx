@@ -153,11 +153,9 @@ const styles = StyleSheet.create({
         paddingVertical: 5
     },
     searchInput: {
-        height: 40,
-        borderColor: 'gray',
+        borderColor: '#ddd',
         borderWidth: 1,
         borderRadius: 5,
-        paddingHorizontal: 10,
-        margin: 10,
+        marginBottom: 10
     },
 });

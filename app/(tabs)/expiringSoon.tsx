@@ -95,11 +95,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     searchInput: {
-        height: 40,
-        borderColor: 'gray',
+        borderColor: '#ddd',
         borderWidth: 1,
-        marginBottom: 10,
-        paddingHorizontal: 8
+        borderRadius: 5,
+        marginBottom: 10
     },
     emptyText: {
         textAlign: 'center',
@@ -114,7 +113,7 @@ const styles = StyleSheet.create({
         paddingTop: 15,
     },
     slider: {
-        margin: 20,
+        margin: 10,
         marginBottom: 30,
     }
 });
