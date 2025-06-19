@@ -4,21 +4,23 @@ import { router } from "expo-router";
 import dayDifference from "../constants/timeDifference";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-type IconName = keyof typeof FontAwesome5.glyphmap;
-
 // renders a specific ingredient for the list view
 const renderIngredientItem = ({ item }: { item: Ingredient }) => {
     return (<TouchableOpacity onPress={() => router.push(`/ingredient-details/${item.id}`)} style={styles.touchable}>
         <View style={styles.ingredientView}>
             <View style={styles.info}>
-                <Text style={styles.ingredientTitle}>{item.name}</Text>
+                <Text style={styles.ingredientTitle}>{item.name} {item.brand ? `(${item.brand})` : null}</Text>
                 <View style={{ flexDirection: 'row' }}>
                     { item.expirationDate && <Text>Expires: {item.expirationDate.toLocaleDateString()} </Text> }
-                    {item.open ? <Text>(Open)</Text> : null}
                 </View>
                 <Text>Category: {item.category ?? 'N/A'}</Text>
                 <Text>Added: {item.addedDate.toLocaleDateString()}</Text>
             </View>
+            { item.open ? 
+                <View style={styles.badge}>
+                    <FontAwesome5 name='box-open' color={styles.openText.color}/>
+                    <Text style={styles.openText}>Open</Text>
+                </View> : null }
             { item.frozen ? 
                 <View style={styles.badge}>
                     <FontAwesome5 name='snowflake' color={styles.frozenText.color}/>
@@ -41,10 +43,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ddd',
         flexDirection: 'row',
+        gap: 5
     },
     ingredientTitle: {
         fontSize: 16,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginRight: 5,
     },
     touchable: {
         opacity: 100
@@ -52,7 +56,10 @@ const styles = StyleSheet.create({
     badge: {
         justifyContent: 'center',
         alignItems: 'center',
-        flex: 2,
+        flex: 1,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#ddd'
     },
     ripenessText: {
         textAlign: 'center',
@@ -64,8 +71,13 @@ const styles = StyleSheet.create({
         color: 'cornflowerblue',
         fontWeight: '500'
     },
+    openText: {
+        textAlign: 'center',
+        fontWeight: '500',
+        color: '#777',
+    },
     info: {
-        flex: 8
+        flex: 4
     }
 })
 

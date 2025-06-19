@@ -1,8 +1,7 @@
 import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient } from '../../types/ingredient';
-import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
-import { SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import debounce from 'lodash.debounce';
 import renderIngredientItem from '../../components/renderIngredient';
@@ -10,12 +9,22 @@ import dayDifference from '../../constants/timeDifference';
 
 export default function ExpiringSoonScreen() {
     const { ingredients } = useIngredients();
-    const router = useRouter();
     const [search, setSearch] = useState('');
     const [daysThreshold, setDaysThreshold] = useState<number>(0); // Defaults to what spoils today (in 0 days)
 
     const expiringIngredients = useMemo(() => {        
         const today = new Date();
+
+        // group items with same due date
+        const groups: Record<string, Ingredient[]> = {};
+        // add ingredients with ripeness >= ripe to separate group
+        for (const ingredient of ingredients) {
+             if (ingredient.maturity.lvl >= 1) {
+                if (!groups['Ripe']) groups['Ripe'] = [];
+                groups['Ripe'].push(ingredient);
+                continue;
+            }
+        }
 
         // remove any ingredients not matching the chosen expiry time
         const filteredIngredients = ingredients.filter((ingredient) => {
@@ -23,28 +32,28 @@ export default function ExpiringSoonScreen() {
             if (!ingredient.expirationDate) return false;
             // if not matching search term
             if (!ingredient.name.toLocaleLowerCase().includes(search.toLowerCase())) return false;
+            // remove ingredients which are already determined to be ripe
+            if (ingredient.maturity.lvl >= 1) return false;
             
             const diffDays = dayDifference(ingredient.expirationDate, today);
-
-            // check which items
+            // check which items match the threshhold
             return (daysThreshold !== null) ? diffDays <= daysThreshold : false;
         });
 
-        // group items with same due date
-        const groups: Record<string, Ingredient[]> = {};
         for (const ingredient of filteredIngredients) {
             if (!ingredient.expirationDate) continue;
-            const dateKey = ingredient.expirationDate.toDateString();
-            if (!groups[dateKey]) groups[dateKey] = [];
-            groups[dateKey].push(ingredient);
+            const diff = dayDifference(ingredient.expirationDate, today);
+            const key = `Expiring in ${diff} days`;
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(ingredient);
         }
 
-        return Object.entries(groups).map((group) => {
-            const diffDays = dayDifference(new Date(group[0]), today);
-            return {
-                title: diffDays,
+        return Object.entries(groups)
+            .sort((a, b) => parseInt(a[0].match(/\d+/)?.[0] ?? '0', 10) - parseInt(b[0].match(/\d+/)?.[0] ?? '0', 10))
+            .map((group) => ({
+                title: group[0],
                 data: group[1]
-            }}).sort((a, b) => a.title - b.title)
+            }))
             .map((group) => ({ title: group.title.toString(), data: group.data }));
     }, [ingredients, search, daysThreshold]);
 
@@ -65,7 +74,7 @@ export default function ExpiringSoonScreen() {
                 sections={expiringIngredients}
                 keyExtractor={(item) => item.id}
                 renderItem={renderIngredientItem}
-                renderSectionHeader={({section: {title}}) => <Text style={styles.listSectionHeader}>Expiring in {title} days</Text>}
+                renderSectionHeader={({section: {title}}) => <Text style={styles.listSectionHeader}>{title}</Text>}
             />
         </View>
     );
@@ -105,6 +114,7 @@ const styles = StyleSheet.create({
         paddingTop: 15,
     },
     slider: {
-        margin: 20
+        margin: 20,
+        marginBottom: 30,
     }
 });

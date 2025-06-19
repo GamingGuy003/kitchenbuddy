@@ -2,7 +2,6 @@ import { CATEGORIES, CONFECTIONS, LOCATIONS, RIPENESS } from '../../constants/in
 import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient, IngredientCategory, IngredientConfection, IngredientLocation } from '../../types/ingredient';
 import { Picker } from '@react-native-picker/picker';
-import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { FlatList, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import renderIngredientItem from '../../components/renderIngredient';
