@@ -4,9 +4,13 @@ import { Ingredient } from '../../types/ingredient';
 import React, { useState, useEffect } from 'react';
 import { Alert, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { useGrocery } from '../../context/GroceryContext';
+import { Button } from 'react-native';
 
 export default function AddIngredientScreen() {
     const { addIngredient } = useIngredients();
+    const { addItem } = useGrocery();
+    
     const params = useLocalSearchParams<{ name?: string, brand?: string, category?: string }>();
     // Key to force re-render of IngredientForm after submission, effectively resetting it
     const [formKey, setFormKey] = useState(0);

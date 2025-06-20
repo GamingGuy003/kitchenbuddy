@@ -75,26 +75,23 @@ export default function QueryScreen() {
     };
 
     // filterpricker element
-    const RenderFilterPicker = () => {
-        switch (queryType) {
-            case 'location':
-                return <Picker selectedValue={filter} onValueChange={itemValue => setFilter(itemValue)}>
-                    <Picker.Item label='No Location Filter' value='' />
-                    {LOCATIONS.map(location => <Picker.Item key={location} label={location} value={location} />)}
-                </Picker>;
-            case 'category':
-                return <Picker selectedValue={filter} onValueChange={itemValue => setFilter(itemValue)}>
-                    <Picker.Item label='No Category Filter' value='' />
-                    {CATEGORIES.map(category => <Picker.Item key={category} label={category} value={category} />)}
-                </Picker>;
-            case 'confectionType':
-                return <Picker selectedValue={filter} onValueChange={itemValue => setFilter(itemValue)}>
-                    <Picker.Item label='No Confection Filter' value='' />
-                    {CONFECTIONS.map(confection => <Picker.Item key={confection} label={confection} value={confection} />)}
-                </Picker>;
-            default:
-                return null;
-        }
+    const filterPicker = {
+        ['location']:
+        <Picker selectedValue={filter} onValueChange={itemValue => setFilter(itemValue)}>
+            <Picker.Item label='No Location Filter' value='' />
+            {LOCATIONS.map(location => <Picker.Item key={location} label={location} value={location} />)}
+        </Picker>,
+        ['category']:
+        <Picker selectedValue={filter} onValueChange={itemValue => setFilter(itemValue)}>
+            <Picker.Item label='No Category Filter' value='' />
+            {CATEGORIES.map(category => <Picker.Item key={category} label={category} value={category} />)}
+        </Picker>,
+        ['confectionType']:
+        <Picker selectedValue={filter} onValueChange={itemValue => setFilter(itemValue)}>
+            <Picker.Item label='No Confection Filter' value='' />
+            {CONFECTIONS.map(confection => <Picker.Item key={confection} label={confection} value={confection} />)}
+        </Picker>,
+        ['missingData']: null, ['recentlyAdded']: null, ['ripenessCheck']: null
     };
 
     // listing element
@@ -133,7 +130,7 @@ export default function QueryScreen() {
                 <Picker.Item label="By Category" value="category" />
                 <Picker.Item label="By Confection Type" value="confectionType" />
             </Picker>
-            <RenderFilterPicker/>
+            { filterPicker[queryType] }
              <TextInput
                 style={CommonStyles.input}
                 placeholder="Search ingredients..."

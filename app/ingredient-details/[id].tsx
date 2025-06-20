@@ -101,15 +101,16 @@ export default function IngredientDetailScreen() {
     if (!ingredient) {
         return <View style={styles.centered}><Text>Ingredient not found.</Text></View>;
     }
+    
     return (
         <KeyboardAwareScrollView>
             <IngredientForm
                 initialValues={{...ingredient}}
                 onSubmit={handleFormSubmit}
-                submitButtonTitle="Save Changes"
+                submitButtonTitle='Save Changes'
             />
             <View style={styles.deleteContainer}>
-                <Button title="Delete Ingredient" color="red" onPress={handleDeleteIngredient} />
+                <Button title='Delete Ingredient' color='red' onPress={handleDeleteIngredient} />
             </View>
         </KeyboardAwareScrollView>
     );

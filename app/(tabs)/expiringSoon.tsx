@@ -21,7 +21,7 @@ export default function ExpiringSoonScreen() {
         const groups: Record<string, Ingredient[]> = {};
         // add ingredients with ripeness >= ripe to separate group
         for (const ingredient of ingredients) {
-             if (ingredient.maturity.lvl >= 1) {
+            if (ingredient.maturity.lvl >= 1) {
                 if (!groups['Ripe']) groups['Ripe'] = [];
                 groups['Ripe'].push(ingredient);
                 continue;
@@ -41,7 +41,7 @@ export default function ExpiringSoonScreen() {
             
             const diffDays = dayDifference(ingredient.expirationDate, today);
             // check which items match the threshhold
-            return (daysThreshold !== null) ? diffDays <= daysThreshold : false;
+            return daysThreshold !== null ? diffDays <= daysThreshold : false;
         });
 
         for (const ingredient of filteredIngredients) {
@@ -72,7 +72,7 @@ export default function ExpiringSoonScreen() {
     return (
         <View style={CommonStyles.pageContainer}>
             <Text style={CommonStyles.listSectionHeader}>Items expiring within {daysThreshold} days</Text>
-            <Slider onValueChange={debounceUpdate} minimumValue={0} maximumValue={30} value={daysThreshold} step={1} StepMarker={(props) => props.index % 5 == 0 ? <Text style={styles.sliderMarker}>{props.index}</Text> : null} style={styles.slider}/>
+            <Slider onValueChange={debounceUpdate} minimumValue={0} maximumValue={30} value={daysThreshold} step={1} StepMarker={(props) => props.index % 5 == 0 && <Text style={styles.sliderMarker}>{props.index}</Text>} style={styles.slider}/>
             <TextInput style={CommonStyles.input} placeholder="Search expiring ingredients..." value={search} onChangeText={setSearch}/>
             <SectionList
                 style={CommonStyles.list}

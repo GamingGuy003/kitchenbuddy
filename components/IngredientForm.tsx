@@ -16,9 +16,10 @@ interface IngredientFormProps {
     initialValues?: Partial<Ingredient>;
     onSubmit: (data: Partial<Ingredient>) => void;
     submitButtonTitle: string;
+    datePrefilled?: boolean; // if date should be prefilled, yet still modifiable
 }
 
-export default function IngredientForm({ initialValues, onSubmit, submitButtonTitle }: IngredientFormProps) {
+export default function IngredientForm({ initialValues, onSubmit, submitButtonTitle, datePrefilled }: IngredientFormProps) {
     const [name, setName] = useState<string | undefined>(initialValues?.name);
     const [category, setCategory] = useState<string | undefined>(initialValues?.category);
     const [location, setLocation] = useState<string | undefined>(initialValues?.location);
@@ -37,7 +38,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
         brandLock: brand !== undefined,
         categoryLock: category !== undefined,
         confectionLock: confectionType !== undefined,
-        dateLock: expirationDate !== undefined,
+        dateLock: !datePrefilled && expirationDate !== undefined,
     });
 
     useEffect(() => {
@@ -60,7 +61,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 brandLock: brand !== undefined,
                 categoryLock: category !== undefined,
                 confectionLock: confectionType !== undefined,
-                dateLock: expirationDate !== undefined,
+                dateLock: !datePrefilled && expirationDate !== undefined,
             });
         }
     }, [initialValues]);
@@ -172,25 +173,24 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                     amountUnit={amountUnit}
                 />
                 
-                <Text style={CommonStyles.label}>Ripeness: {getRipenessText()} { dayDifference(maturity.edited) >= 3 ? '(Checking required)' : null}</Text>
+                <Text style={CommonStyles.label}>Ripeness: {getRipenessText()} { dayDifference(maturity.edited) >= 3 && '(Checking required)'}</Text>
                 <View style={CommonStyles.rowView}>
                     <Slider step={1} minimumValue={-1} maximumValue={3} value={maturity.lvl} onValueChange={setRipenessAndDate} style={{ flex: 1 }}/>
-                    { !initialValues?.maturity ? null :
-                    <Button title={`Confirm ${getRipenessText()}`} onPress={() => {
+                    { initialValues?.maturity && <Button title={`Confirm ${getRipenessText()}`} onPress={() => {
                         setRipenessAndDate(maturity.lvl);
                         Alert.alert('Ripeness confirmed', `Ripeness is still ${getRipenessText()}`);
-                    }}/> }
+                    }}/>}
                 </View>
 
                 <Text style={CommonStyles.label}>Category</Text>
                 <Picker selectedValue={category} onValueChange={setCategory} enabled={!locks.categoryLock}>
-                    { !category ? <Picker.Item label="Select Category..."/> : null }
+                    { !category && <Picker.Item label="Select Category..."/> }
                     {CATEGORIES.map(category => <Picker.Item key={category} label={category} value={category} />)}
                 </Picker>
 
                 <Text style={CommonStyles.label}>Location</Text>
                 <Picker selectedValue={location} onValueChange={setLocation}>
-                    { !location ? <Picker.Item label="Select Location..."/> : null }
+                    { !location && <Picker.Item label="Select Location..."/> }
                     {LOCATIONS.map(location => <Picker.Item key={location} label={location} value={location} />)}
                 </Picker>
 
@@ -198,14 +198,14 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 <View style={CommonStyles.rowView}>
                     <View style={{ flex: 3 }}>
                         <Picker selectedValue={confectionType} onValueChange={setConfectionTypeFreeze} enabled={!locks.confectionLock}>
-                            { !confectionType ? <Picker.Item label="Select Confection Type..."/> : null }
+                            { !confectionType && <Picker.Item label="Select Confection Type..."/> }
                             {CONFECTIONS.map(confection => <Picker.Item key={confection} label={confection} value={confection} />)}
                         </Picker>
                     </View>
-                    { confectionType === 'Fresh' && expirationDate ?
+                    { confectionType === 'Fresh' && expirationDate &&
                     <View style={{flex: 1, marginTop: 10 }}>
                         <Button title={freezeInterval ? 'unfreeze' : 'freeze'} onPress={ freezeInterval ? unfreeze : freeze}/>
-                    </View> : null }
+                    </View>}
                 </View>
                 
                 <Text style={CommonStyles.label}>Expiration Date</Text>

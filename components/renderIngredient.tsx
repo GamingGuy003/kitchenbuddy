@@ -6,7 +6,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import CommonStyles from "../constants/commonStyle";
 
 // renders a specific ingredient for the list view
-const renderIngredientItem = ({ item }: { item: Ingredient }) => {
+const renderIngredientItem = ({ item, hideMaturityWarning }: { item: Ingredient, hideMaturityWarning?: boolean }) => {
     return (<TouchableOpacity onPress={() => router.push(`/ingredient-details/${item.id}`)}>
         <View style={styles.ingredientView}>
             <View style={styles.info}>
@@ -24,7 +24,7 @@ const renderIngredientItem = ({ item }: { item: Ingredient }) => {
                 <FontAwesome5 name='snowflake' color={styles.frozen.color}/>
                 <Text style={styles.frozen}>Frozen</Text>
             </View>}
-            { dayDifference(item.maturity.edited) >= 3 && <View style={styles.badge}>
+            { dayDifference(item.maturity.edited) >= 3 && !hideMaturityWarning && <View style={styles.badge}>
                 <Text style={styles.ripeness}>!</Text>
                 <Text style={styles.ripeness}>Check Ripeness</Text>
             </View>}

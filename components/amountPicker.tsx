@@ -20,6 +20,7 @@ const AmountPicker = (
         amountValue: string,
         amountUnit?: string
     }) => {
+
     // shows the amount units
     const units = {
         [IngredientAmountKind.COUNT]: <TextInput style={{...CommonStyles.inputInactive, textAlign: 'center'}} placeholder="pcs" editable={false} />,
