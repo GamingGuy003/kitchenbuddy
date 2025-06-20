@@ -47,7 +47,8 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         borderColor: '#ddd',
-        width: 65
+        width: 65,
+        height: 65,
     },
     ripeness: {
         ...CommonStyles.badgeText,
