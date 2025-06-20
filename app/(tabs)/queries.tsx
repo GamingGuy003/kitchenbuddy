@@ -9,13 +9,13 @@ import dayDifference from '../../constants/timeDifference';
 import CommonStyles from '../../constants/commonStyle';
 import { ItemSeparator, ListEmpty, SectionHeader } from '../../components/listComponents';
 
-type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType' | 'ripenessCheck';
+type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType' | 'ripenessCheck' | 'all';
 type Filter = IngredientCategory | IngredientConfection | IngredientLocation | undefined;
 
 export default function QueryScreen() {
     const { ingredients } = useIngredients();
     // type of query
-    const [queryType, setQueryType] = useState<QueryType>('recentlyAdded');
+    const [queryType, setQueryType] = useState<QueryType>('all');
     // filter selection
     const [filter, setFilter] = useState<Filter>('');
     // search field text
@@ -33,7 +33,7 @@ export default function QueryScreen() {
                 result = ingredients.filter(i => !i.category || !i.location || !i.confectionType || !i.expirationDate);
                 break;
             case 'recentlyAdded':
-                result = [...ingredients].sort((a, b) => b.addedDate.getTime() - a.addedDate.getTime()); // Assuming addedDate is already a Date object
+                result = [...ingredients].sort((a, b) => b.addedDate.getTime() - a.addedDate.getTime()).filter(item => dayDifference(item.addedDate) <= 4); // only show items added in the past 2 days
                 break;
             case 'location':
                 result = ingredients.filter(i => i.location === filter);
@@ -45,7 +45,7 @@ export default function QueryScreen() {
                 result = ingredients.filter(i => i.confectionType === filter);
                 break;
             default:
-                result = ingredients;
+                result = ingredients.sort((a, b) => b.addedDate.getTime() - a.addedDate.getTime());
         }
         return result.filter(i => i.name?.toLowerCase().includes(search.toLowerCase()));
     }, [ingredients, queryType, filter, search]);
@@ -59,6 +59,7 @@ export default function QueryScreen() {
             recentlyAdded: (() => 'Unassigned'),
             missingData: (() => 'Unassigned'),
             ripenessCheck: (() => 'Unassigned'),
+            all: (() => 'Unassigned')
         }[queryType];
 
         const grouped: Record<string, Ingredient[]> = {};
@@ -91,13 +92,13 @@ export default function QueryScreen() {
             <Picker.Item label='No Confection Filter' value='' />
             {CONFECTIONS.map(confection => <Picker.Item key={confection} label={confection} value={confection} />)}
         </Picker>,
-        ['missingData']: null, ['recentlyAdded']: null, ['ripenessCheck']: null
+        ['missingData']: null, ['recentlyAdded']: null, ['ripenessCheck']: null, ['all']: null
     };
 
     // listing element
     const RenderIngredientList = () => {
         // if querytype has subcategories and no filter has been chosen, show section list with all items
-        if (filter === '' && queryType != 'missingData' && queryType != 'recentlyAdded' && queryType != 'ripenessCheck') {
+        if (filter === '' && queryType != 'missingData' && queryType != 'recentlyAdded' && queryType != 'ripenessCheck' && queryType != 'all' ) {
             return <SectionList
                 style={CommonStyles.list}
                 sections={groupItemsByField()}
