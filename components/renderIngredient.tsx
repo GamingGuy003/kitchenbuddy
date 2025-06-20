@@ -1,5 +1,5 @@
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import { Ingredient } from "../types/ingredient";
+import { Ingredient, stringifyAmount } from "../types/ingredient";
 import { router } from "expo-router";
 import dayDifference from "../constants/timeDifference";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -10,28 +10,24 @@ const renderIngredientItem = ({ item }: { item: Ingredient }) => {
     return (<TouchableOpacity onPress={() => router.push(`/ingredient-details/${item.id}`)}>
         <View style={styles.ingredientView}>
             <View style={styles.info}>
-                <Text style={CommonStyles.ingredientContainerTitle}>{item.name} {item.brand ? `(${item.brand})` : null}</Text>
-                <View style={{ flexDirection: 'row' }}>
-                    { item.expirationDate && <Text>Expires: {item.expirationDate.toLocaleDateString()} </Text> }
-                </View>
-                <Text>Category: {item.category ?? 'N/A'}</Text>
+                <Text style={CommonStyles.ingredientContainerTitle}>{item.name} {stringifyAmount(item.amount)}</Text>
+                { item.brand && <Text>Brand: {item.brand}</Text> }
+                { item.expirationDate && <Text>Expires: {item.expirationDate.toLocaleDateString()} </Text> }
+                { item.category && <Text>Category: {item.category}</Text> }
                 <Text>Added: {item.addedDate.toLocaleDateString()}</Text>
             </View>
-            { item.open ? 
-                <View style={styles.badge}>
-                    <FontAwesome5 name='box-open' color={styles.open.color}/>
-                    <Text style={styles.open}>Open</Text>
-                </View> : null }
-            { item.frozen ? 
-                <View style={styles.badge}>
-                    <FontAwesome5 name='snowflake' color={styles.frozen.color}/>
-                    <Text style={styles.frozen}>Frozen</Text>
-                </View> : null }
-            { dayDifference(item.maturity.edited) >= 3 ? 
-                <View style={styles.badge}>
-                    <Text style={styles.ripeness}>!</Text>
-                    <Text style={styles.ripeness}>Check Ripeness</Text>
-                </View> : null }
+            { item.open && <View style={styles.badge}>
+                <FontAwesome5 name='box-open' color={styles.open.color}/>
+                <Text style={styles.open}>Open</Text>
+            </View>}
+            { item.frozen && <View style={styles.badge}>
+                <FontAwesome5 name='snowflake' color={styles.frozen.color}/>
+                <Text style={styles.frozen}>Frozen</Text>
+            </View>}
+            { dayDifference(item.maturity.edited) >= 3 && <View style={styles.badge}>
+                <Text style={styles.ripeness}>!</Text>
+                <Text style={styles.ripeness}>Check Ripeness</Text>
+            </View>}
         </View>
     </TouchableOpacity>)
 };

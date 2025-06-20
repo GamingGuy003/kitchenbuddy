@@ -9,6 +9,8 @@ import CheckBox from 'expo-checkbox';
 import Slider from '@react-native-community/slider';
 import dayDifference from '../constants/timeDifference';
 import CommonStyles from '../constants/commonStyle';
+import FormLock from '../types/formLock';
+import AmountPicker from './amountPicker';
 
 interface IngredientFormProps {
     initialValues?: Partial<Ingredient>;
@@ -30,8 +32,13 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     const [amountValue, setAmountValue] = useState<string>(initialValues?.amount ? initialValues.amount.value : '1');
     const [amountUnit, setAmountUnit] = useState<string | undefined>(initialValues?.amount?.kind === IngredientAmountKind.CUSTOM ? initialValues.amount.unit : undefined);
     const [isDatePickerVisible, setDatePickerVisibility] = useState<boolean>(false);
-
-    console.log({ amountKind, amountValue, amountUnit })
+    const [locks, setLocks] = useState<FormLock>({
+        nameLock: name !== undefined,
+        brandLock: brand !== undefined,
+        categoryLock: category !== undefined,
+        confectionLock: confectionType !== undefined,
+        dateLock: expirationDate !== undefined,
+    });
 
     useEffect(() => {
         // Update form if initialValues change
@@ -48,6 +55,13 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             setAmountValue(initialValues?.amount ? initialValues.amount.value : '1');
             setAmountUnit(initialValues?.amount?.kind === IngredientAmountKind.CUSTOM ? initialValues.amount.unit : undefined);
             setFreezeInterval(initialValues.frozen);
+            setLocks({
+                nameLock: name !== undefined,
+                brandLock: brand !== undefined,
+                categoryLock: category !== undefined,
+                confectionLock: confectionType !== undefined,
+                dateLock: expirationDate !== undefined,
+            });
         }
     }, [initialValues]);
 
@@ -119,6 +133,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
         setFreezeInterval(undefined);
     }
 
+    // unfreeze if confection type changes
     const setConfectionTypeFreeze = (confectionType?: string) => {
         unfreeze();
         setConfectionType(confectionType);
@@ -131,20 +146,13 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
         setOpen(value)
     }
 
-    // shows the amount units
-    const units = {
-        [IngredientAmountKind.COUNT]: <TextInput style={{...CommonStyles.input, textAlign: 'center'}} placeholder="#" editable={false} />,
-        [IngredientAmountKind.FRACTION]: <TextInput style={{...CommonStyles.input, textAlign: 'center'}} placeholder="%" editable={false} />,
-        [IngredientAmountKind.CUSTOM]: <TextInput style={{...CommonStyles.input, textAlign: 'center'}} value={amountUnit} onChangeText={unit => {setAmountUnit(unit)}} placeholder="e.g., ml" />,
-    };
-
     return (
         <KeyboardAwareScrollView>
             <ScrollView contentContainerStyle={CommonStyles.pageContainer}>
                 <View style={CommonStyles.rowView}>
                     <View style={{ flex: 3 }}>
                         <Text style={CommonStyles.label}>Name*</Text>
-                        <TextInput style={CommonStyles.input} value={name} onChangeText={setName} placeholder="e.g., Apples" />
+                        <TextInput style={locks.nameLock ? CommonStyles.inputInactive : CommonStyles.input} value={name} onChangeText={setName} placeholder="e.g., Apples" editable={!locks.nameLock}/>
                     </View>
                     <View style={styles.checkBoxView}>
                         <Text style={CommonStyles.label}>Open</Text>
@@ -153,37 +161,29 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 </View>
 
                 <Text style={CommonStyles.label}>Brand</Text>
-                <TextInput style={CommonStyles.input} value={brand} onChangeText={setBrand} placeholder="e.g., Nestle" />
+                <TextInput style={locks.brandLock ? CommonStyles.inputInactive : CommonStyles.input} value={brand} onChangeText={setBrand} placeholder="e.g., Nestle" editable={!locks.brandLock}/>
 
-                <View style={CommonStyles.rowView}>
-                    <View style={{ flex: 8, alignSelf: 'flex-end' }}>
-                        <Text style={CommonStyles.label}>Amount</Text>
-                        <TextInput style={CommonStyles.input} value={amountValue} onChangeText={setAmountValue} placeholder="e.g., 1" />
-                    </View>
-                    <View style={{ flex: 2, alignSelf: 'flex-end' }}>
-                        <Text style={CommonStyles.label}>Unit</Text>
-                        <View style={CommonStyles.rowView}>
-                            { units[amountKind] }
-                            <Picker selectedValue={amountKind} onValueChange={setAmountKind} placeholder={amountKind} style={{width: 30}}>
-                                <Picker.Item key='Count' label='#' value={IngredientAmountKind.COUNT}/>
-                                <Picker.Item key='Fraction' label='%' value={IngredientAmountKind.FRACTION}/>
-                                <Picker.Item key='Custom' label='...' value={IngredientAmountKind.CUSTOM}/>
-                            </Picker>
-                        </View>
-                    </View>
-                </View>
-
+                <AmountPicker
+                    setAmountKind={setAmountKind}
+                    setAmountValue={setAmountValue}
+                    setAmountUnit={setAmountUnit}
+                    amountKind={amountKind}
+                    amountValue={amountValue}
+                    amountUnit={amountUnit}
+                />
+                
                 <Text style={CommonStyles.label}>Ripeness: {getRipenessText()} { dayDifference(maturity.edited) >= 3 ? '(Checking required)' : null}</Text>
                 <View style={CommonStyles.rowView}>
                     <Slider step={1} minimumValue={-1} maximumValue={3} value={maturity.lvl} onValueChange={setRipenessAndDate} style={{ flex: 1 }}/>
+                    { !initialValues?.maturity ? null :
                     <Button title={`Confirm ${getRipenessText()}`} onPress={() => {
                         setRipenessAndDate(maturity.lvl);
                         Alert.alert('Ripeness confirmed', `Ripeness is still ${getRipenessText()}`);
-                    }}/>
+                    }}/> }
                 </View>
 
                 <Text style={CommonStyles.label}>Category</Text>
-                <Picker selectedValue={category} onValueChange={setCategory}>
+                <Picker selectedValue={category} onValueChange={setCategory} enabled={!locks.categoryLock}>
                     { !category ? <Picker.Item label="Select Category..."/> : null }
                     {CATEGORIES.map(category => <Picker.Item key={category} label={category} value={category} />)}
                 </Picker>
@@ -197,7 +197,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 <Text style={CommonStyles.label}>Confection Type</Text>
                 <View style={CommonStyles.rowView}>
                     <View style={{ flex: 3 }}>
-                        <Picker selectedValue={confectionType} onValueChange={setConfectionTypeFreeze}>
+                        <Picker selectedValue={confectionType} onValueChange={setConfectionTypeFreeze} enabled={!locks.confectionLock}>
                             { !confectionType ? <Picker.Item label="Select Confection Type..."/> : null }
                             {CONFECTIONS.map(confection => <Picker.Item key={confection} label={confection} value={confection} />)}
                         </Picker>
@@ -209,7 +209,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 </View>
                 
                 <Text style={CommonStyles.label}>Expiration Date</Text>
-                <Button title={expirationDate ? `Selected: ${expirationDate.toLocaleDateString()}` : "Pick Exact Date"} onPress={showDatePicker} />
+                <Button title={expirationDate ? expirationDate.toLocaleDateString() : "Pick Exact Date"} onPress={showDatePicker} disabled={locks.dateLock}/>
                 <DateTimePickerModal
                     isVisible={isDatePickerVisible}
                     mode="date"
@@ -218,15 +218,17 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                     onCancel={hideDatePicker}
                     minimumDate={new Date()}
                 />
-
-                <Text style={CommonStyles.label}>Or Estimate Expiry:</Text>
-                <View style={CommonStyles.rowView}>
-                    {EXPIRY_ESTIMATES.map((estimate: ExpiryEstimate) => (
-                        <View key={estimate.label} style={styles.estimateButton}>
-                            <Button title={estimate.label} onPress={() => handleSelectEstimate(estimate.days)} />
-                        </View>
-                    ))}
-                </View>
+                { !locks.dateLock ?
+                <View>
+                    <Text style={CommonStyles.label}>Or Estimate Expiry:</Text>
+                    <View style={CommonStyles.rowView}>
+                        {EXPIRY_ESTIMATES.map((estimate: ExpiryEstimate) => (
+                            <View key={estimate.label} style={styles.estimateButton}>
+                                <Button title={estimate.label} onPress={() => handleSelectEstimate(estimate.days)} />
+                            </View>
+                        ))}
+                    </View>
+                </View> : null }
 
                 <View style={{ marginTop: 20 }}>
                     <Button title={submitButtonTitle} onPress={handleSubmit} />

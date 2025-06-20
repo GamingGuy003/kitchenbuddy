@@ -24,6 +24,13 @@ const CommonStyles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: '#ccc',
     },
+    // disabled text input field
+    inputInactive: {
+        paddingTop: 15,
+        paddingBottom: 5,
+        fontSize: 16,
+        color: '#777'
+    },
     // separates the items in a list
     itemSeparator: {
         height: 10

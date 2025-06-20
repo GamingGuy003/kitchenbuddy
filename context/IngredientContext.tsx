@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ingredient, IngredientContextType } from '../types/ingredient';
+import { Ingredient, IngredientAmountKind, IngredientContextType } from '../types/ingredient';
 import { RIPENESS } from '../constants/ingredientProperties';
 
 const INGREDIENTS_STORAGE_KEY = '@kitchen_buddy_ingredients';
@@ -48,7 +48,7 @@ export const IngredientProvider = ({ children }: { children: ReactNode }) => {
       ...ingredient,
       open: ingredient.open || false,
       maturity: ingredient.maturity || { edited: new Date(), lvl: RIPENESS.NONE },
-      amount: ingredient.amount || { kind: 'Count', value: 1 },
+      amount: ingredient.amount || { kind: IngredientAmountKind.COUNT, value: '1' },
       id: Date.now().toString(),
       addedDate: new Date(),
     };

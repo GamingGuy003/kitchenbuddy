@@ -13,6 +13,14 @@ export type IngredientAmount =
   { kind: IngredientAmountKind.FRACTION; value: string } | // eg 50% of a carton of milk
   { kind: IngredientAmountKind.CUSTOM; value: string; unit?: string }; // eg 546 ml of oil or 1 carton of eggs
 
+export const stringifyAmount = (amount: IngredientAmount) => {
+  switch (amount.kind) {
+    case (IngredientAmountKind.COUNT): return `(${amount.value}pcs)`
+    case (IngredientAmountKind.CUSTOM): return `(${amount.value}${amount.unit})`
+    case IngredientAmountKind.FRACTION: return `(${amount.value}%)`
+  }
+}
+
 export interface Ingredient {
   id: string;
   name?: string; // will be checked to be present upon submission
