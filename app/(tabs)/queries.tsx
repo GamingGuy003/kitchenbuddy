@@ -6,6 +6,8 @@ import React, { useMemo, useState } from 'react';
 import { FlatList, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import renderIngredientItem from '../../components/renderIngredient';
 import dayDifference from '../../constants/timeDifference';
+import CommonStyles from '../../constants/commonStyle';
+import { ItemSeparator, ListEmpty, SectionHeader } from '../../components/listComponents';
 
 type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType' | 'ripenessCheck';
 type Filter = IngredientCategory | IngredientConfection | IngredientLocation | undefined;
@@ -45,7 +47,7 @@ export default function QueryScreen() {
             default:
                 result = ingredients;
         }
-        return result.filter(i => i.name.toLowerCase().includes(search.toLowerCase()));
+        return result.filter(i => i.name?.toLowerCase().includes(search.toLowerCase()));
     }, [ingredients, queryType, filter, search]);
 
     // groups items by the currently selected query type in order to show a section list
@@ -100,24 +102,29 @@ export default function QueryScreen() {
         // if querytype has subcategories and no filter has been chosen, show section list with all items
         if (filter === '' && queryType != 'missingData' && queryType != 'recentlyAdded' && queryType != 'ripenessCheck') {
             return <SectionList
+                style={CommonStyles.list}
                 sections={groupItemsByField()}
                 keyExtractor={(item) => item.id}
                 renderItem={renderIngredientItem}
-                renderSectionHeader={({section: {title}}) => <Text style={styles.listSectionHeader}>{title}</Text>}
+                renderSectionHeader={SectionHeader}
+                ItemSeparatorComponent={ItemSeparator}
+                ListEmptyComponent={ListEmpty}
             />
         } else {
-            return <FlatList 
+            return <FlatList
+                style={CommonStyles.list}
                 data={filteredIngredients}
-                renderItem={renderIngredientItem}
                 keyExtractor={item => item.id}
-                ListEmptyComponent={<Text style={styles.listEmptyText}>No ingredients match your query.</Text>}
+                renderItem={renderIngredientItem}
+                ItemSeparatorComponent={ItemSeparator}
+                ListEmptyComponent={ListEmpty}
             />
         }
     };
 
     // renders the whole page
     return (
-        <View style={styles.container}>
+        <View style={CommonStyles.pageContainer}>
             <Picker selectedValue={queryType} onValueChange={(itemValue: QueryType) => { setQueryType(itemValue); setFilter(''); }}>
                 <Picker.Item label="Ripeness Check due" value="ripenessCheck" />
                 <Picker.Item label="Most Recently Added" value='recentlyAdded' />
@@ -128,7 +135,7 @@ export default function QueryScreen() {
             </Picker>
             <RenderFilterPicker/>
              <TextInput
-                style={styles.searchInput}
+                style={CommonStyles.input}
                 placeholder="Search ingredients..."
                 value={search}
                 onChangeText={setSearch}
@@ -137,25 +144,3 @@ export default function QueryScreen() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10
-    },
-    listEmptyText: {
-        textAlign: 'center',
-        marginTop: 20,
-    },
-    listSectionHeader: {
-        fontWeight: 'bold',
-        fontSize: 24,
-        paddingVertical: 5
-    },
-    searchInput: {
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 5,
-        marginBottom: 10
-    },
-});

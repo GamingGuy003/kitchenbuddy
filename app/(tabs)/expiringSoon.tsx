@@ -6,6 +6,8 @@ import Slider from '@react-native-community/slider';
 import debounce from 'lodash.debounce';
 import renderIngredientItem from '../../components/renderIngredient';
 import dayDifference from '../../constants/timeDifference';
+import CommonStyles from '../../constants/commonStyle';
+import { ItemSeparator, ListEmpty, SectionHeader } from '../../components/listComponents';
 
 export default function ExpiringSoonScreen() {
     const { ingredients } = useIngredients();
@@ -30,6 +32,8 @@ export default function ExpiringSoonScreen() {
         const filteredIngredients = ingredients.filter((ingredient) => {
             // if no expiration date set
             if (!ingredient.expirationDate) return false;
+            // if no name is set
+            if (!ingredient.name) return false;
             // if not matching search term
             if (!ingredient.name.toLocaleLowerCase().includes(search.toLowerCase())) return false;
             // remove ingredients which are already determined to be ripe
@@ -66,49 +70,24 @@ export default function ExpiringSoonScreen() {
     )
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.listSectionHeader}>Items expiring within {daysThreshold} days</Text>
+        <View style={CommonStyles.pageContainer}>
+            <Text style={CommonStyles.listSectionHeader}>Items expiring within {daysThreshold} days</Text>
             <Slider onValueChange={debounceUpdate} minimumValue={0} maximumValue={30} value={daysThreshold} step={1} StepMarker={(props) => props.index % 5 == 0 ? <Text style={styles.sliderMarker}>{props.index}</Text> : null} style={styles.slider}/>
-            <TextInput style={styles.searchInput} placeholder="Search expiring ingredients..." value={search} onChangeText={setSearch}/>
+            <TextInput style={CommonStyles.input} placeholder="Search expiring ingredients..." value={search} onChangeText={setSearch}/>
             <SectionList
+                style={CommonStyles.list}
                 sections={expiringIngredients}
                 keyExtractor={(item) => item.id}
                 renderItem={renderIngredientItem}
-                renderSectionHeader={({section: {title}}) => <Text style={styles.listSectionHeader}>{title}</Text>}
+                renderSectionHeader={SectionHeader}
+                ItemSeparatorComponent={ItemSeparator}
+                ListEmptyComponent={<ListEmpty text ='No ingredients expiring in this timeframe.'/>}
             />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10
-    },
-    itemContainer: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc'
-    },
-    itemName: {
-        fontSize: 16,
-        fontWeight: 'bold'
-    },
-    searchInput: {
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 5,
-        marginBottom: 10
-    },
-    emptyText: {
-        textAlign: 'center',
-        marginTop: 20
-    },
-    listSectionHeader: {
-        fontWeight: 'bold',
-        fontSize: 24,
-        paddingVertical: 5
-    },
     sliderMarker: {
         paddingTop: 15,
     },

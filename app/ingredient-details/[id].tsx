@@ -1,6 +1,6 @@
 import IngredientForm from '../../components/IngredientForm'; // Import the IngredientForm
 import { useIngredients } from '../../context/IngredientContext';
-import { Ingredient, IngredientData } from '../../types/ingredient';
+import { Ingredient } from '../../types/ingredient';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -48,7 +48,7 @@ export default function IngredientDetailScreen() {
 
     }, [id, getIngredientById, navigation, router, isNavigatingAway]);
 
-    const handleFormSubmit = (data: IngredientData) => {
+    const handleFormSubmit = (data: Partial<Ingredient>) => {
         if (!data.name || !data.name.trim()) {
             Alert.alert("Validation Error", "Ingredient name is required.");
             return;
@@ -74,12 +74,12 @@ export default function IngredientDetailScreen() {
                     setIsNavigatingAway(true); // Set flag before delete and navigation
                     deleteIngredient(ingredient.id);
                     
-                    // navigate to the queries tab.
+                    // return to where we came from
                     Alert.alert(
                         "Success",
                         "Ingredient deleted.",
                         [{ text: "OK", onPress: () => {
-                            router.push('/(tabs)/queries');
+                            router.back();
                         }}]
                     );
                 }}
