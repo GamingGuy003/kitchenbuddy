@@ -67,33 +67,6 @@ export default function TabLayout() {
     };
 
     checkLocationAndNavigate(); // Initial check
-
-    // Optional: Set up a listener for location changes if you want more dynamic updates
-    // This can be battery intensive, so use with caution and appropriate intervals.
-    // (async () => {
-    //   let { status } = await Location.requestForegroundPermissionsAsync();
-    //   if (status === 'granted') {
-    // locationSubscription = await Location.watchPositionAsync(
-    //       {
-    //         accuracy: Location.Accuracy.Balanced, // Adjust accuracy as needed
-    //         timeInterval: 60000, // e.g., check every 60 seconds
-    //         distanceInterval: 100, // e.g., or every 100 meters
-    //       },
-    //       (newLocation) => {
-    //         // Re-run proximity check with newLocation.coords
-    //         // Be careful with frequent navigation calls here
-    //         console.log("New location:", newLocation.coords.latitude, newLocation.coords.longitude);
-    //         // Potentially call a refined checkLocationAndNavigate logic here
-    //       }
-    //     );
-    //   }
-    // })();
-
-    //return () => {
-    //  if (locationSubscription != null) {
-    //    locationSubscription.remove();
-    //  }
-    // };
   }, [router, pathname]); // Rerun effect if router or pathname changes (pathname helps avoid re-navigating if already there)
 
 
