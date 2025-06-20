@@ -1,4 +1,6 @@
-export type ShopType = 'Supermarket' | 'Butcher' | 'Bakery' | 'Fishmonger' | 'Greengrocer' | 'Other';
+export const SHOP_TYPES = ['Supermarket', 'Butcher', 'Bakery', 'Fishmonger', 'Greengrocer', 'Other'];
+
+export type ShopType = typeof SHOP_TYPES[number];
 
 export interface Shop {
     id: string;
@@ -7,13 +9,3 @@ export interface Shop {
     latitude: number;
     longitude: number;
 }
-
-export const SHOP_TYPES: ShopType[] = [
-    'Supermarket',
-    'Butcher',
-    'Bakery',
-    'Fishmonger',
-    'Greengrocer',
-    'Supermarket',
-    'Other',
-];
