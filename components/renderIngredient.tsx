@@ -10,7 +10,7 @@ const renderIngredientItem = ({ item }: { item: Ingredient }) => {
     return (<TouchableOpacity onPress={() => router.push(`/ingredient-details/${item.id}`)}>
         <View style={styles.ingredientView}>
             <View style={styles.info}>
-                <Text style={CommonStyles.ingredientContainerTitle}>{item.name} {stringifyAmount(item.amount)}</Text>
+                <Text style={CommonStyles.ingredientContainerTitle}>{item.name} {stringifyAmount(item.amount) || null}</Text>
                 { item.brand && <Text>Brand: {item.brand}</Text> }
                 { item.expirationDate && <Text>Expires: {item.expirationDate.toLocaleDateString()} </Text> }
                 { item.category && <Text>Category: {item.category}</Text> }
