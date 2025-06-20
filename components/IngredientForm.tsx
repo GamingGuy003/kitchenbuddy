@@ -1,5 +1,5 @@
 import { EXPIRY_ESTIMATES, ExpiryEstimate, CATEGORIES, LOCATIONS, CONFECTIONS, RIPENESS } from '../constants/ingredientProperties';
-import { IngredientData, Maturity } from '../types/ingredient'; // Assuming IngredientData is the type for form data
+import { Ingredient, IngredientAmount, Maturity } from '../types/ingredient'; // Assuming IngredientData is the type for form data
 import { Picker } from '@react-native-picker/picker';
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -8,36 +8,40 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CheckBox from 'expo-checkbox';
 import Slider from '@react-native-community/slider';
 import dayDifference from '../constants/timeDifference';
+import AmountSelector from './amountSelector';
+import CommonStyles from '../constants/commonStyle';
 
 interface IngredientFormProps {
-    initialValues?: Partial<IngredientData>;
-    onSubmit: (data: IngredientData) => void;
+    initialValues?: Partial<Ingredient>;
+    onSubmit: (data: Partial<Ingredient>) => void;
     submitButtonTitle: string;
 }
 
 export default function IngredientForm({ initialValues, onSubmit, submitButtonTitle }: IngredientFormProps) {
-    const [name, setName] = useState(initialValues?.name || '');
-    const [category, setCategory] = useState(initialValues?.category);
-    const [location, setLocation] = useState(initialValues?.location);
-    const [confectionType, setConfectionType] = useState(initialValues?.confectionType);
+    const [name, setName] = useState<string | undefined>(initialValues?.name);
+    const [category, setCategory] = useState<string | undefined>(initialValues?.category);
+    const [location, setLocation] = useState<string | undefined>(initialValues?.location);
+    const [confectionType, setConfectionType] = useState<string | undefined>(initialValues?.confectionType);
     const [expirationDate, setExpirationDate] = useState<Date | undefined>(initialValues?.expirationDate ? new Date(initialValues.expirationDate) : undefined);
     const [brand, setBrand] = useState<string | undefined>(initialValues?.brand);
     const [open, setOpen] = useState<boolean>(initialValues?.open || false);
-    const [ripeness, setRipeness] = useState<Maturity>(initialValues?.maturity || { lvl: RIPENESS.NONE, edited: new Date() });
+    const [maturity, setMaturity] = useState<Maturity>(initialValues?.maturity || { lvl: RIPENESS.NONE, edited: new Date() });
     const [freezeInterval, setFreezeInterval] = useState<number | undefined>(initialValues?.frozen);
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [amount, setAmount] = useState<IngredientAmount>({ kind: 'Count', value: 1});
+    const [isDatePickerVisible, setDatePickerVisibility] = useState<boolean>(false);
 
     useEffect(() => {
         // Update form if initialValues change
         if (initialValues) {
-            setName(initialValues.name || '');
-            setCategory(initialValues.category || '');
-            setLocation(initialValues.location || '');
-            setConfectionType(initialValues.confectionType || '');
+            setName(initialValues.name);
+            setCategory(initialValues.category);
+            setLocation(initialValues.location);
+            setConfectionType(initialValues.confectionType);
             setExpirationDate(initialValues.expirationDate);
-            setBrand(initialValues.brand || '');
+            setBrand(initialValues.brand);
             setOpen(initialValues.open || false);
-            setRipeness(initialValues.maturity || { lvl: RIPENESS.NONE, edited: new Date ()});
+            setMaturity(initialValues.maturity || { lvl: RIPENESS.NONE, edited: new Date ()});
+            setAmount({ kind: 'Count', value: 1});
             setFreezeInterval(initialValues.frozen);
         }
     }, [initialValues]);
@@ -59,25 +63,26 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     const handleSubmit = () => {
         onSubmit({
             name,
-            category: category || undefined,
-            location: location || undefined,
-            confectionType: confectionType || undefined,
+            category,
+            location,
+            confectionType,
             expirationDate,
-            brand: brand || undefined,
+            brand,
             open: open || false,
-            maturity: ripeness,
-            frozen: freezeInterval
+            maturity,
+            frozen: freezeInterval,
+            amount,
         });
     };
 
     // converts the enum variants into a readable string
     const getRipenessText = () => {
-        return RIPENESS[ripeness.lvl].charAt(0) + RIPENESS[ripeness.lvl].toLocaleLowerCase().slice(1)
+        return RIPENESS[maturity.lvl].charAt(0) + RIPENESS[maturity.lvl].toLocaleLowerCase().slice(1)
     };
 
     // when slider moves, modify ripeness as well as edited date
     const setRipenessAndDate = (ripeness: RIPENESS) => {
-        setRipeness({ lvl: ripeness, edited: new Date() })
+        setMaturity({ lvl: ripeness, edited: new Date() })
     }
 
     // save the interval between time of freezing and old expiration date
@@ -113,45 +118,46 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
 
     return (
         <KeyboardAwareScrollView>
-            <ScrollView contentContainerStyle={styles.container}>
-                <View style={styles.rowView}>
+            <ScrollView contentContainerStyle={CommonStyles.pageContainer}>
+                <View style={CommonStyles.rowView}>
                     <View style={{ flex: 3 }}>
-                        <Text style={styles.label}>Name*</Text>
-                        <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="e.g., Apples" />
+                        <Text style={CommonStyles.label}>Name*</Text>
+                        <TextInput style={CommonStyles.input} value={name} onChangeText={setName} placeholder="e.g., Apples" />
                     </View>
                     <View style={styles.checkBoxView}>
-                        <Text style={styles.label}>Open</Text>
+                        <Text style={CommonStyles.label}>Open</Text>
                         <CheckBox value={open} onValueChange={handleOpened}/>
                     </View>
                 </View>
-                    
 
-                <Text style={styles.label}>Brand</Text>
-                <TextInput style={styles.input} value={brand} onChangeText={setBrand} placeholder="e.g., Nestle" />
+                <Text style={CommonStyles.label}>Brand</Text>
+                <TextInput style={CommonStyles.input} value={brand} onChangeText={setBrand} placeholder="e.g., Nestle" />
 
-                <Text style={styles.label}>Ripeness: {getRipenessText()} { dayDifference(ripeness.edited) >= 3 ? '(Checking required)' : null}</Text>
-                <View style={styles.rowView}>
-                    <Slider step={1} minimumValue={-1} maximumValue={3} value={ripeness.lvl} onValueChange={setRipenessAndDate} style={{ flex: 1 }}/>
+                <AmountSelector amountChange={() => {}}/>
+
+                <Text style={CommonStyles.label}>Ripeness: {getRipenessText()} { dayDifference(maturity.edited) >= 3 ? '(Checking required)' : null}</Text>
+                <View style={CommonStyles.rowView}>
+                    <Slider step={1} minimumValue={-1} maximumValue={3} value={maturity.lvl} onValueChange={setRipenessAndDate} style={{ flex: 1 }}/>
                     <Button title={`Confirm ${getRipenessText()}`} onPress={() => {
-                        setRipenessAndDate(ripeness.lvl);
+                        setRipenessAndDate(maturity.lvl);
                         Alert.alert('Ripeness confirmed', `Ripeness is still ${getRipenessText()}`);
                     }}/>
                 </View>
 
-                <Text style={styles.label}>Category</Text>
-                <Picker selectedValue={category} onValueChange={setCategory}>
-                    <Picker.Item label="Select Category..." value="" />
+                <Text style={CommonStyles.label}>Category</Text>
+                <Picker selectedValue={category} onValueChange={setCategory} placeholder='Sond'>
+                    <Picker.Item label="Select Category..." value={undefined} />
                     {CATEGORIES.map(category => <Picker.Item key={category} label={category} value={category} />)}
                 </Picker>
 
-                <Text style={styles.label}>Location</Text>
+                <Text style={CommonStyles.label}>Location</Text>
                 <Picker selectedValue={location} onValueChange={setLocation}>
                     <Picker.Item label="Select Location..." value="" />
                     {LOCATIONS.map(location => <Picker.Item key={location} label={location} value={location} />)}
                 </Picker>
 
-                <Text style={styles.label}>Confection Type</Text>
-                <View style={styles.rowView}>
+                <Text style={CommonStyles.label}>Confection Type</Text>
+                <View style={CommonStyles.rowView}>
                     <View style={{ flex: 3 }}>
                         <Picker selectedValue={confectionType} onValueChange={setConfectionTypeFreeze}>
                             <Picker.Item label="Select Confection Type..." value="" />
@@ -164,7 +170,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                     </View> : null }
                 </View>
                 
-                <Text style={styles.label}>Expiration Date</Text>
+                <Text style={CommonStyles.label}>Expiration Date</Text>
                 <Button title={expirationDate ? `Selected: ${expirationDate.toLocaleDateString()}` : "Pick Exact Date"} onPress={showDatePicker} />
                 <DateTimePickerModal
                     isVisible={isDatePickerVisible}
@@ -175,8 +181,8 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                     minimumDate={new Date()}
                 />
 
-                <Text style={styles.label}>Or Estimate Expiry:</Text>
-                <View style={styles.rowView}>
+                <Text style={CommonStyles.label}>Or Estimate Expiry:</Text>
+                <View style={CommonStyles.rowView}>
                     {EXPIRY_ESTIMATES.map((estimate: ExpiryEstimate) => (
                         <View key={estimate.label} style={styles.estimateButton}>
                             <Button title={estimate.label} onPress={() => handleSelectEstimate(estimate.days)} />
@@ -184,7 +190,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                     ))}
                 </View>
 
-                <View style={styles.submitButtonContainer}>
+                <View style={{ marginTop: 20 }}>
                     <Button title={submitButtonTitle} onPress={handleSubmit} />
                 </View>
             </ScrollView>
@@ -193,39 +199,12 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 20
-    },
-    label: {
-        fontSize: 16,
-        margin: 5,
-        fontWeight: '500'
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        marginBottom: 10,
-        borderRadius: 5,
-        flex: 2
-    },
     checkBoxView: {
         justifyContent: 'flex-start',
         alignItems: 'center',
         rowGap: 10
     },
-    rowView: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-evenly',
-        alignContent: 'flex-end',
-        flex: 1,
-        gap: 10,
-    },
     estimateButton: {
         flex: 1,
-    },
-    submitButtonContainer: {
-        marginTop: 20
     },
 });

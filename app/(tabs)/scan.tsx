@@ -1,6 +1,6 @@
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, View, ActivityIndicator, Alert, Image } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useState } from 'react';
+import { Button, StyleSheet, Text, View, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 
 // Define a type for the product data we expect (can be expanded)

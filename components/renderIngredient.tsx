@@ -3,13 +3,14 @@ import { Ingredient } from "../types/ingredient";
 import { router } from "expo-router";
 import dayDifference from "../constants/timeDifference";
 import { FontAwesome5 } from "@expo/vector-icons";
+import CommonStyles from "../constants/commonStyle";
 
 // renders a specific ingredient for the list view
 const renderIngredientItem = ({ item }: { item: Ingredient }) => {
     return (<TouchableOpacity onPress={() => router.push(`/ingredient-details/${item.id}`)} style={styles.touchable}>
         <View style={styles.ingredientView}>
             <View style={styles.info}>
-                <Text style={styles.ingredientTitle}>{item.name} {item.brand ? `(${item.brand})` : null}</Text>
+                <Text style={CommonStyles.ingredientContainerTitle}>{item.name} {item.brand ? `(${item.brand})` : null}</Text>
                 <View style={{ flexDirection: 'row' }}>
                     { item.expirationDate && <Text>Expires: {item.expirationDate.toLocaleDateString()} </Text> }
                 </View>
@@ -38,17 +39,11 @@ const renderIngredientItem = ({ item }: { item: Ingredient }) => {
 const styles = StyleSheet.create({
     ingredientView: {
         padding: 10,
-        margin: 2,
         borderRadius: 5,
         borderWidth: 1,
         borderColor: '#ddd',
         flexDirection: 'row',
         gap: 5
-    },
-    ingredientTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginRight: 5,
     },
     touchable: {
         opacity: 100
