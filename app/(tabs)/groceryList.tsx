@@ -1,36 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Alert, Button, TextInput, FlatList, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Alert, Button, TextInput, FlatList, ScrollView, Platform } from 'react-native';
+import { Shop, ShopType, SHOP_TYPES } from '../../types/shop'; // Assuming SHOP_TYPES is defined in types/shop
+import { Picker } from '@react-native-picker/picker';
 
-// Define a type for Shop (can be moved to a types file later)
-export interface Shop {
-    id: string;
-    name: string;
-    type: string; // e.g., 'general', 'butcher'
-    latitude: number;
-    longitude: number;
-}
-
-// Sample initial shop data - this will be managed in state
-const initialShops: Shop[] = [
-  { id: '1', name: 'Downtown Groceries', type: 'general', latitude: 34.0522, longitude: -118.2437 },
-  { id: '2', name: 'The Corner Butcher', type: 'butcher', latitude: 34.0550, longitude: -118.2450 },
-];
 
 type ViewMode = 'main' | 'seeShops' | 'addShop';
 
 export default function GroceryListScreen() {
     
     const [viewMode, setViewMode] = useState<ViewMode>('main');
-    const [shopsList, setShopsList] = useState<Shop[]>(initialShops);
+    const [shopsList, setShopsList] = useState<Shop[]>([]);
 
     // States for Add Shop Form
     const [newShopName, setNewShopName] = useState('');
-    const [newShopType, setNewShopType] = useState('');
+    const [newShopType, setNewShopType] = useState<ShopType | undefined>(undefined);
     const [newShopLat, setNewShopLat] = useState('');
     const [newShopLon, setNewShopLon] = useState('');
 
     const handleAddShop = () => {
-        if (!newShopName.trim() || !newShopType.trim() || !newShopLat.trim() || !newShopLon.trim()) {
+        if (!newShopName.trim() || newShopType === undefined || !newShopLat.trim() || !newShopLon.trim()) {
             Alert.alert("Validation Error", "All shop fields are required.");
             return;
         }
@@ -45,7 +33,7 @@ export default function GroceryListScreen() {
         const newShop: Shop = {
             id: String(Date.now()), // Simple unique ID
             name: newShopName,
-            type: newShopType,
+            type: newShopType!, // Use non-null assertion as we've checked for undefined
             latitude: lat,
             longitude: lon,
         };
@@ -53,7 +41,7 @@ export default function GroceryListScreen() {
         Alert.alert("Success", "Shop added successfully!");
         // Reset form and view
         setNewShopName('');
-        setNewShopType('');
+        setNewShopType(undefined);
         setNewShopLat('');
         setNewShopLon('');
         setViewMode('main');
@@ -63,7 +51,7 @@ export default function GroceryListScreen() {
     if (viewMode === 'seeShops') {
         return (
             <View style={styles.container}>
-                <Text>Registered Shops</Text>
+                <Text style={styles.title}>Registered Shops</Text>
                 <FlatList
                     data={shopsList}
                     keyExtractor={(item) => item.id}
@@ -83,19 +71,25 @@ export default function GroceryListScreen() {
     if (viewMode === 'addShop') {
         return (
             <ScrollView contentContainerStyle={styles.container}>
-                <Text>Add New Shop</Text>
+                <Text style={styles.title}>Add New Shop</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Shop Name"
                     value={newShopName}
                     onChangeText={setNewShopName}
                 />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Shop Type (e.g., general, butcher)"
-                    value={newShopType}
-                    onChangeText={setNewShopType}
-                />
+                <Text style={styles.label}>Shop Type</Text>
+                <Picker
+                    style={styles.picker}
+                    itemStyle={styles.pickerItem}
+
+                    selectedValue={newShopType}
+                    onValueChange={(itemValue) => setNewShopType(itemValue)}
+                >
+                    <Picker.Item label="Select Shop Type..." value={undefined} />
+                    {SHOP_TYPES.map(type => (
+                        <Picker.Item key={type} label={type} value={type} />))}
+                </Picker>
                 <TextInput
                     style={styles.input}
                     placeholder="Latitude"
@@ -145,6 +139,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 20,
     },
+    label: {
+        fontSize: 16,
+        margin: 5,
+        fontWeight: '500',
+        width: '100%', // Ensure label takes full width
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 15,
+    },
+    picker: {
+        width: '100%',
+    },
     input: {
         height: 40,
         borderColor: 'gray',
@@ -154,13 +162,17 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         width: '100%',
     },
+    pickerItem: {
+        // Add any specific styles for picker items if needed
+        // For example, fontSize: 16,
+    },
     shopItem: {
         padding: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#eee',
     },
     shopName: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
     },
     buttonContainer: {
