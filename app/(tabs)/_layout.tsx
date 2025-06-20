@@ -1,10 +1,119 @@
-import React from 'react';
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter, usePathname } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Platform, Alert } from 'react-native';
+import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
+
+// Define a type for Shop
+interface Shop {
+  id: string;
+  name: string;
+  type: string; // e.g., 'general', 'butcher'
+  latitude: number;
+  longitude: number;
+}
+
+// Sample shop data - REPLACE WITH YOUR ACTUAL SHOP LOCATIONS FOR TESTING
+const shops: Shop[] = [
+  { id: '1', name: 'Nearby General Store', type: 'general', latitude: 34.052235, longitude: -118.243683 }, // Example: Los Angeles City Hall
+  { id: '2', name: 'Local Butcher King', type: 'butcher', latitude: 34.055000, longitude: -118.245000 }, // Example: Near LA City Hall
+  // Add more shops relevant to your testing area.
+  // To test, you can use your current location for one of the shops.
+];
+
+const PROXIMITY_RADIUS_KM = 2; // 500 meters - adjust as needed
+
+// Haversine formula to calculate distance between two lat/lon points
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c; // Distance in km
+  return distance;
+}
+
+function deg2rad(deg: number): number {
+  return deg * (Math.PI / 180);
+}
+
 export default function TabLayout() {
+
+  const router = useRouter();
+  const pathname = usePathname(); // Gets the current route path
+
+  useEffect(() => {
+    // let locationSubscription: Location.LocationSubscription | null = null;
+
+    const checkLocationAndNavigate = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is needed to find nearby shops.');
+        return;
+      }
+
+      try {
+        // Get current location once for an initial check
+        // For continuous monitoring, you might use Location.watchPositionAsync
+        let currentLocation = await Location.getCurrentPositionAsync({});
+        
+        for (const shop of shops) {
+          const distance = calculateDistance(currentLocation.coords.latitude, currentLocation.coords.longitude, shop.latitude, shop.longitude);
+          if (distance <= PROXIMITY_RADIUS_KM) {
+            if (pathname !== '/groceryList') { // Check if not already on the grocery list tab
+              Alert.alert("Shop Nearby!", `You are near ${shop.name}. Switching to Grocery List.`);
+              router.replace('/groceryList'); // Navigate to the grocery list tab
+            }
+            return; // Stop checking once a nearby shop is found and navigation occurs
+          }
+        }
+      } catch (error) {
+        console.error("Error getting location or navigating:", error);
+        Alert.alert("Location Error", "Could not fetch location. Make sure location services are enabled.");
+      }
+    };
+
+    checkLocationAndNavigate(); // Initial check
+
+    // Optional: Set up a listener for location changes if you want more dynamic updates
+    // This can be battery intensive, so use with caution and appropriate intervals.
+    // (async () => {
+    //   let { status } = await Location.requestForegroundPermissionsAsync();
+    //   if (status === 'granted') {
+    // locationSubscription = await Location.watchPositionAsync(
+    //       {
+    //         accuracy: Location.Accuracy.Balanced, // Adjust accuracy as needed
+    //         timeInterval: 60000, // e.g., check every 60 seconds
+    //         distanceInterval: 100, // e.g., or every 100 meters
+    //       },
+    //       (newLocation) => {
+    //         // Re-run proximity check with newLocation.coords
+    //         // Be careful with frequent navigation calls here
+    //         console.log("New location:", newLocation.coords.latitude, newLocation.coords.longitude);
+    //         // Potentially call a refined checkLocationAndNavigate logic here
+    //       }
+    //     );
+    //   }
+    // })();
+
+    //return () => {
+    //  if (locationSubscription != null) {
+    //    locationSubscription.remove();
+    //  }
+    // };
+  }, [router, pathname]); // Rerun effect if router or pathname changes (pathname helps avoid re-navigating if already there)
+
+
+
+
+
   return (
     <Tabs screenOptions={({ route }) => ({
         animation: 'shift',
