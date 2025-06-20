@@ -14,6 +14,7 @@ export default function TabLayout() {
           if (route.name === 'add') iconName = focused ? 'add-circle' : 'add-circle-outline'
           else if (route.name === 'expiringSoon') iconName = focused ? 'alert-circle' : 'alert-circle-outline'
           else if (route.name === 'queries') iconName = focused ? 'search' : 'search-outline'
+          else if (route.name === 'groceryList') iconName = focused ? 'list' : 'list-outline'
           else if (route.name === 'scan') iconName = focused ? 'barcode' : 'barcode-outline'
           
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -38,6 +39,12 @@ export default function TabLayout() {
         name="queries" // This will look for app/(tabs)/queries.tsx
         options={{
           title: 'Queries',
+        }}
+      />
+      <Tabs.Screen
+        name="groceryList" // This will look for app/(tabs)/expiringSoon.tsx
+        options={{
+          title: 'Grocery List',
         }}
       />
       <Tabs.Screen
