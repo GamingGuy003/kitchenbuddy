@@ -2,29 +2,14 @@ import { Tabs, useRouter, usePathname } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Alert } from 'react-native';
 import * as Location from 'expo-location';
+import { ShopProvider } from '../../context/ShopContext'; // Import ShopProvider
 import { Ionicons } from '@expo/vector-icons';
+import { Shop, ShopType, SHOP_TYPES } from '../../types/shop';
+import { useShops } from '../../context/ShopContext';
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
-
-// Define a type for Shop
-interface Shop {
-  id: string;
-  name: string;
-  type: string; // e.g., 'general', 'butcher'
-  latitude: number;
-  longitude: number;
-}
-
-// Sample shop data - REPLACE WITH YOUR ACTUAL SHOP LOCATIONS FOR TESTING
-const shops: Shop[] = [
-  { id: '1', name: 'Nearby General Store', type: 'general', latitude: 34.052235, longitude: -118.243683 }, // Example: Los Angeles City Hall
-  { id: '2', name: 'Local Butcher King', type: 'butcher', latitude: 34.055000, longitude: -118.245000 }, // Example: Near LA City Hall
-  // Add more shops relevant to your testing area.
-  // To test, you can use your current location for one of the shops.
-];
-
-const PROXIMITY_RADIUS_KM = 2; // 500 meters - adjust as needed
+const PROXIMITY_RADIUS_KM = 0.5; // adjust as needed
 
 // Haversine formula to calculate distance between two lat/lon points
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -45,6 +30,7 @@ function deg2rad(deg: number): number {
 }
 
 export default function TabLayout() {
+  const { shops } = useShops(); // Use the context to access shops
 
   const router = useRouter();
   const pathname = usePathname(); // Gets the current route path
@@ -112,9 +98,8 @@ export default function TabLayout() {
 
 
 
-
-
   return (
+    
     <Tabs screenOptions={({ route }) => ({
         animation: 'shift',
         tabBarIcon: ({ focused, color, size }) => {
@@ -163,5 +148,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    
   );
 }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Alert, Button, TextInput, FlatList, ScrollView, Platform } from 'react-native';
-import { Shop, ShopType, SHOP_TYPES } from '../../types/shop'; // Assuming SHOP_TYPES is defined in types/shop
+import { Shop, ShopType, SHOP_TYPES } from '../../types/shop';
 import { Picker } from '@react-native-picker/picker';
+import { useShops } from '../../context/ShopContext'; // Import useShops
 
 
 type ViewMode = 'main' | 'seeShops' | 'addShop';
@@ -9,7 +10,7 @@ type ViewMode = 'main' | 'seeShops' | 'addShop';
 export default function GroceryListScreen() {
     
     const [viewMode, setViewMode] = useState<ViewMode>('main');
-    const [shopsList, setShopsList] = useState<Shop[]>([]);
+    const { shops, setShops } = useShops(); // Use the context
 
     // States for Add Shop Form
     const [newShopName, setNewShopName] = useState('');
@@ -37,7 +38,7 @@ export default function GroceryListScreen() {
             latitude: lat,
             longitude: lon,
         };
-        setShopsList(prevShops => [...prevShops, newShop]);
+        setShops(prevShops => [...prevShops, newShop]);
         Alert.alert("Success", "Shop added successfully!");
         // Reset form and view
         setNewShopName('');
@@ -53,7 +54,7 @@ export default function GroceryListScreen() {
             <View style={styles.container}>
                 <Text style={styles.title}>Registered Shops</Text>
                 <FlatList
-                    data={shopsList}
+                    data={shops}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
                         <View style={styles.shopItem}>
