@@ -1,5 +1,5 @@
 import { EXPIRY_ESTIMATES, ExpiryEstimate, CATEGORIES, LOCATIONS, CONFECTIONS, RIPENESS } from '../constants/ingredientProperties';
-import { Ingredient, IngredientAmount, Maturity } from '../types/ingredient'; // Assuming IngredientData is the type for form data
+import { Ingredient, IngredientAmount, IngredientAmountKind, Maturity } from '../types/ingredient'; // Assuming IngredientData is the type for form data
 import { Picker } from '@react-native-picker/picker';
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -8,7 +8,6 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CheckBox from 'expo-checkbox';
 import Slider from '@react-native-community/slider';
 import dayDifference from '../constants/timeDifference';
-import AmountSelector from './amountSelector';
 import CommonStyles from '../constants/commonStyle';
 
 interface IngredientFormProps {
@@ -27,8 +26,12 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
     const [open, setOpen] = useState<boolean>(initialValues?.open || false);
     const [maturity, setMaturity] = useState<Maturity>(initialValues?.maturity || { lvl: RIPENESS.NONE, edited: new Date() });
     const [freezeInterval, setFreezeInterval] = useState<number | undefined>(initialValues?.frozen);
-    const [amount, setAmount] = useState<IngredientAmount>({ kind: 'Count', value: 1});
+    const [amountKind, setAmountKind] = useState<IngredientAmountKind>(initialValues?.amount ? initialValues.amount.kind : IngredientAmountKind.COUNT);
+    const [amountValue, setAmountValue] = useState<string>(initialValues?.amount ? initialValues.amount.value : '1');
+    const [amountUnit, setAmountUnit] = useState<string | undefined>(initialValues?.amount?.kind === IngredientAmountKind.CUSTOM ? initialValues.amount.unit : undefined);
     const [isDatePickerVisible, setDatePickerVisibility] = useState<boolean>(false);
+
+    console.log({ amountKind, amountValue, amountUnit })
 
     useEffect(() => {
         // Update form if initialValues change
@@ -41,7 +44,9 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             setBrand(initialValues.brand);
             setOpen(initialValues.open || false);
             setMaturity(initialValues.maturity || { lvl: RIPENESS.NONE, edited: new Date ()});
-            setAmount({ kind: 'Count', value: 1});
+            setAmountKind(initialValues?.amount ? initialValues.amount.kind : IngredientAmountKind.COUNT);
+            setAmountValue(initialValues?.amount ? initialValues.amount.value : '1');
+            setAmountUnit(initialValues?.amount?.kind === IngredientAmountKind.CUSTOM ? initialValues.amount.unit : undefined);
             setFreezeInterval(initialValues.frozen);
         }
     }, [initialValues]);
@@ -54,11 +59,21 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
         hideDatePicker();
     };
 
+    // adds the estimated amount of days to todays date
     const handleSelectEstimate = (days: number) => {
         const newDate = new Date();
         newDate.setDate(newDate.getDate() + days);
         setExpirationDate(newDate);
     };
+
+    // convert amount into appropriate instance
+    const convertAmount = () => {
+        switch (amountKind) {
+            case (IngredientAmountKind.COUNT): return{ kind: IngredientAmountKind.COUNT, value: amountValue }
+            case (IngredientAmountKind.FRACTION): return{ kind: IngredientAmountKind.FRACTION, value: amountValue }
+            case (IngredientAmountKind.CUSTOM): return{ kind: IngredientAmountKind.CUSTOM, value: amountValue, unit: amountUnit }
+        }
+    }
 
     const handleSubmit = () => {
         onSubmit({
@@ -71,7 +86,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
             open: open || false,
             maturity,
             frozen: freezeInterval,
-            amount,
+            amount: convertAmount(),
         });
     };
 
@@ -116,6 +131,13 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
         setOpen(value)
     }
 
+    // shows the amount units
+    const units = {
+        [IngredientAmountKind.COUNT]: <TextInput style={{...CommonStyles.input, textAlign: 'center'}} placeholder="#" editable={false} />,
+        [IngredientAmountKind.FRACTION]: <TextInput style={{...CommonStyles.input, textAlign: 'center'}} placeholder="%" editable={false} />,
+        [IngredientAmountKind.CUSTOM]: <TextInput style={{...CommonStyles.input, textAlign: 'center'}} value={amountUnit} onChangeText={unit => {setAmountUnit(unit)}} placeholder="e.g., ml" />,
+    };
+
     return (
         <KeyboardAwareScrollView>
             <ScrollView contentContainerStyle={CommonStyles.pageContainer}>
@@ -133,7 +155,23 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 <Text style={CommonStyles.label}>Brand</Text>
                 <TextInput style={CommonStyles.input} value={brand} onChangeText={setBrand} placeholder="e.g., Nestle" />
 
-                <AmountSelector amountChange={() => {}}/>
+                <View style={CommonStyles.rowView}>
+                    <View style={{ flex: 8, alignSelf: 'flex-end' }}>
+                        <Text style={CommonStyles.label}>Amount</Text>
+                        <TextInput style={CommonStyles.input} value={amountValue} onChangeText={setAmountValue} placeholder="e.g., 1" />
+                    </View>
+                    <View style={{ flex: 2, alignSelf: 'flex-end' }}>
+                        <Text style={CommonStyles.label}>Unit</Text>
+                        <View style={CommonStyles.rowView}>
+                            { units[amountKind] }
+                            <Picker selectedValue={amountKind} onValueChange={setAmountKind} placeholder={amountKind} style={{width: 30}}>
+                                <Picker.Item key='Count' label='#' value={IngredientAmountKind.COUNT}/>
+                                <Picker.Item key='Fraction' label='%' value={IngredientAmountKind.FRACTION}/>
+                                <Picker.Item key='Custom' label='...' value={IngredientAmountKind.CUSTOM}/>
+                            </Picker>
+                        </View>
+                    </View>
+                </View>
 
                 <Text style={CommonStyles.label}>Ripeness: {getRipenessText()} { dayDifference(maturity.edited) >= 3 ? '(Checking required)' : null}</Text>
                 <View style={CommonStyles.rowView}>
@@ -145,14 +183,14 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 </View>
 
                 <Text style={CommonStyles.label}>Category</Text>
-                <Picker selectedValue={category} onValueChange={setCategory} placeholder='Sond'>
-                    <Picker.Item label="Select Category..." value={undefined} />
+                <Picker selectedValue={category} onValueChange={setCategory}>
+                    { !category ? <Picker.Item label="Select Category..."/> : null }
                     {CATEGORIES.map(category => <Picker.Item key={category} label={category} value={category} />)}
                 </Picker>
 
                 <Text style={CommonStyles.label}>Location</Text>
                 <Picker selectedValue={location} onValueChange={setLocation}>
-                    <Picker.Item label="Select Location..." value="" />
+                    { !location ? <Picker.Item label="Select Location..."/> : null }
                     {LOCATIONS.map(location => <Picker.Item key={location} label={location} value={location} />)}
                 </Picker>
 
@@ -160,7 +198,7 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                 <View style={CommonStyles.rowView}>
                     <View style={{ flex: 3 }}>
                         <Picker selectedValue={confectionType} onValueChange={setConfectionTypeFreeze}>
-                            <Picker.Item label="Select Confection Type..." value="" />
+                            { !confectionType ? <Picker.Item label="Select Confection Type..."/> : null }
                             {CONFECTIONS.map(confection => <Picker.Item key={confection} label={confection} value={confection} />)}
                         </Picker>
                     </View>

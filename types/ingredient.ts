@@ -3,10 +3,15 @@ import { CATEGORIES, CONFECTIONS, LOCATIONS, RIPENESS } from "../constants/ingre
 export type IngredientCategory = typeof CATEGORIES[number];
 export type IngredientLocation = typeof LOCATIONS[number];
 export type IngredientConfection = typeof CONFECTIONS[number];
+export enum IngredientAmountKind {
+  COUNT = 'Count',
+  FRACTION = 'Fraction',
+  CUSTOM = 'Custom',
+}
 export type IngredientAmount =
-  { kind: 'Count'; value: number } | // eg 6 eggs
-  { kind: 'Fraction'; value: number } | // eg 50% of a carton of milk
-  { kind: 'Custom'; value: number | string; unit: string }; // eg 546 ml of oil
+  { kind: IngredientAmountKind.COUNT; value: string } | // eg 6 eggs
+  { kind: IngredientAmountKind.FRACTION; value: string } | // eg 50% of a carton of milk
+  { kind: IngredientAmountKind.CUSTOM; value: string; unit?: string }; // eg 546 ml of oil or 1 carton of eggs
 
 export interface Ingredient {
   id: string;

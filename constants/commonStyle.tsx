@@ -2,6 +2,11 @@ import { StyleSheet } from "react-native";
 
 // styles reused across different parts of the application
 const CommonStyles = StyleSheet.create({
+    // text for badges like open frozen or ripeness check
+    badgeText: {
+        textAlign: 'center',
+        fontWeight: '500'
+    },
     // container to fit in all page content
     pageContainer: {
         padding: 20
@@ -14,6 +19,8 @@ const CommonStyles = StyleSheet.create({
     },
     // text input field
     input: {
+        paddingTop: 15,
+        paddingBottom: 5,
         borderBottomWidth: 1,
         borderColor: '#ccc',
     },
@@ -24,15 +31,9 @@ const CommonStyles = StyleSheet.create({
     // vertically aligned components
     rowView: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
         justifyContent: 'space-evenly',
-        alignContent: 'flex-end',
         flex: 1,
         gap: 10,
-    },
-    // red buttons
-    redButton: {
-        color: 'red'
     },
     // title for ingredient card
     ingredientContainerTitle: {
