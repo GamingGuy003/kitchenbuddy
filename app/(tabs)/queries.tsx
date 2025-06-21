@@ -124,6 +124,7 @@ export default function QueryScreen(): ReactNode {
     return (
         <View style={CommonStyles.pageContainer}>
             <Picker selectedValue={queryType} onValueChange={(itemValue: QueryType) => { setQueryType(itemValue); setFilter(''); }}>
+                <Picker.Item label="All" value="all" />
                 <Picker.Item label="Ripeness Check due" value="ripenessCheck" />
                 <Picker.Item label="Most Recently Added" value='recentlyAdded' />
                 <Picker.Item label="Missing Data" value="missingData" />
