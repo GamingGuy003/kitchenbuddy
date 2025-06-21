@@ -1,6 +1,6 @@
 import IngredientForm from '../../components/IngredientForm'; // Import the IngredientForm
 import { useIngredients } from '../../context/IngredientContext';
-import { Ingredient } from '../../types/ingredient';
+import { Ingredient, IngredientAmountKind } from '../../types/ingredient';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { ReactNode, useEffect, useState } from 'react';
@@ -54,10 +54,13 @@ export default function IngredientDetailScreen(): ReactNode {
     const handleAddGrocery = () => {
         if (ingredient) {
             setIsNavigatingAway(true);
-            addItem({ item: ingredient });
+            addItem({ item: {
+                ...ingredient,
+                amount: { kind: IngredientAmountKind.COUNT, value: '1' }
+            }});
             Alert.alert(
                 'Success',
-                'Added ingredient to grocery list.',
+                'Added ingredient to grocery list. Edit there to set amount',
                 [{ text: 'OK', onPress: () => {
                     router.back();
                 }}]

@@ -197,7 +197,7 @@ export default function IngredientForm({ initialValues, datePrefilled, leftButto
                 <Text style={CommonStyles.label}>Ripeness: {getRipenessText()} { dayDifference(maturity.edited) >= 3 && '(Checking required)'}</Text>
                 <View style={CommonStyles.rowView}>
                     <Slider step={1} minimumValue={-1} maximumValue={3} value={maturity.lvl} onValueChange={setRipenessAndDate} style={{ flex: 1 }}/>
-                    { initialValues?.maturity && <Button title={`Confirm ${getRipenessText()}`} onPress={() => {
+                    { initialValues?.maturity && dayDifference(initialValues.maturity.edited) >= 3 && <Button title={`Confirm ${getRipenessText()}`} onPress={() => {
                         setRipenessAndDate(maturity.lvl);
                         Alert.alert('Ripeness confirmed', `Ripeness is still ${getRipenessText()}`);
                     }}/>}

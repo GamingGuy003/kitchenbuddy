@@ -3,11 +3,12 @@ import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient, IngredientCategory, IngredientConfection, IngredientLocation } from '../../types/ingredient';
 import { Picker } from '@react-native-picker/picker';
 import React, { ReactNode, useMemo, useState } from 'react';
-import { FlatList, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Modal, SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import renderIngredientItem from '../../components/renderIngredient';
 import dayDifference from '../../constants/timeDifference';
 import CommonStyles from '../../constants/commonStyle';
 import { ItemSeparator, ListEmpty, SectionHeader } from '../../components/listComponents';
+import AmountPicker from '../../components/amountPicker';
 
 type QueryType = 'missingData' | 'recentlyAdded' | 'location' | 'category' | 'confectionType' | 'ripenessCheck' | 'all';
 type Filter = IngredientCategory | IngredientConfection | IngredientLocation | undefined;
