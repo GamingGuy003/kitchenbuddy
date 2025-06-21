@@ -7,7 +7,9 @@ const SHOPS_STORAGE_KEY = '@kitchen_buddy_storage';
 
 interface ShopContextType {
   shops: Shop[];
-  setShops: React.Dispatch<React.SetStateAction<Shop[]>>;
+  addShop: (shop: Partial<Shop>) => void;
+  deleteShop: (id: string) => void;
+  getShop: (id: string) => Shop | undefined;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -66,9 +68,13 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
     saveShop(newShop);
   };
 
+  const getShop = (id: string) => {
+    return shops.find(shop => shop.id === id)
+  }
+
 
   return (
-    <ShopContext.Provider value={{ shops, addShop, deleteShop, setShops }}>
+    <ShopContext.Provider value={{ shops, addShop, deleteShop, getShop }}>
       {children}
     </ShopContext.Provider>
   );
