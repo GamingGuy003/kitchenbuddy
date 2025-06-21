@@ -6,8 +6,6 @@ import { useShopProximity } from '../hooks/useShopProximity';
 import { GroceryProvider } from '../context/GroceryContext';
 
 function AppLogic() {
-  // This component will call the hook.
-  // It's inside the providers so it has access to the contexts it needs.
   useShopProximity();
   return null; // It doesn't render anything
 }
