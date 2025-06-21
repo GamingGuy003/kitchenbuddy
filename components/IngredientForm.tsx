@@ -165,6 +165,7 @@ export default function IngredientForm({ initialValues, datePrefilled, leftButto
     const handleOpened = (value: boolean) => {
         // notify only if changed from unopen to open
         if (!open && value) Alert.alert('Notice', 'Opened products may not last as long; Possibly adjust expiration date');
+        setLocks({ ...locks, dateLock: false });
         setOpen(value)
     }
 
