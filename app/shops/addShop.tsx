@@ -5,6 +5,7 @@ import { Shop, SHOP_TYPES, ShopType } from "../../types/shop";
 import { useState } from "react";
 import { useShops } from "../../context/ShopContext";
 import { IngredientCategory } from "../../types/ingredient";
+import { router } from "expo-router";
 
 export default function addShop() {
     const { shops, addShop, deleteShop } = useShops();
@@ -44,6 +45,7 @@ export default function addShop() {
         setShopType(undefined);
         setShopLat('');
         setShopLon('');
+        router.back();
     };
 
     return (<ScrollView contentContainerStyle={CommonStyles.pageContainer}>

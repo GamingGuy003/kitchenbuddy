@@ -34,12 +34,11 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   // saves Shop to storage
-  const saveShop = async (newShop: Shop[]) => {
+  const saveShops = async (shops: Shop[]) => {
     try {
-      setShops(newShop);
-      await AsyncStorage.setItem(SHOPS_STORAGE_KEY, JSON.stringify(newShop));
+      await AsyncStorage.setItem(SHOPS_STORAGE_KEY, JSON.stringify(shops));
     } catch (error) {
-      console.error("Failed to save Shop.", error);
+      console.error("Failed to save Shops.", error);
     }
   };
 
@@ -50,17 +49,20 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
       ...shop,
       name: shop.name || 'New Shop',
       type: shop.type || 'Other',
+      categories: shop.categories || [],
       latitude: shop.latitude || 0,
       longitude: shop.longitude || 0,
       id: Date.now().toString(),
     };
-    saveShop([...shops, newShop]);
+    setShops([...shops, newShop]);
+    saveShops(shops);
   };
 
   // delete shop from storage
   const deleteShop = (id: string) => {
-    const newShop = shops.filter(i => i.id !== id);
-    setShops(newShop);
+    const cleanedShops = shops.filter(i => i.id !== id);
+    setShops(cleanedShops);
+    saveShops(cleanedShops);
   };
 
   const getShop = (id: string) => {
