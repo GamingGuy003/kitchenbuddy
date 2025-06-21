@@ -24,7 +24,7 @@ export default function GroceryListScreen(): ReactNode {
     const [newShopLat, setNewShopLat] = useState('');
     const [newShopLon, setNewShopLon] = useState('');
 
-    const { proximityRadiusKm, setProximityRadiusKm } = useShopProximity();
+    const [ proximityRadiusKm, setProximityRadiusKm ] = useState<number>(0.5);
 
 
     const { items } = useGrocery();

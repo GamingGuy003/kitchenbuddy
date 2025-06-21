@@ -23,11 +23,10 @@ function deg2rad(deg: number): number {
   return deg * (Math.PI / 180);
 }
 
-export function useShopProximity() {
+export function useShopProximity( proximityRadiusKm: number = 0.5) {
     const { shops } = useShops();
     const router = useRouter();
     const pathname = usePathname();
-    const [proximityRadiusKm, setProximityRadiusKm] = useState<number>(0.5); // Default value
 
 
 
@@ -78,7 +77,5 @@ export function useShopProximity() {
         checkLocationAndNavigate();
         return () => subscription.remove();
     }, []);
-
-    return { proximityRadiusKm, setProximityRadiusKm };
 
 }
