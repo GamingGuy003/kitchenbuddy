@@ -251,7 +251,7 @@ export default function IngredientForm({ initialValues, datePrefilled, leftButto
                     </View>
                 </View> : null }
 
-                <View style={{ ...CommonStyles.rowView, marginTop: 20 }}>
+                <View style={{ ...CommonStyles.rowView, ...styles.bottomButtons}}>
                     <View style={CommonStyles.rowButton}>
                         <Button title={leftButton.title} onPress={handleButtonLeft}/>
                     </View>
@@ -271,4 +271,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         rowGap: 10
     },
+    bottomButtons: {
+        paddingTop: 20,
+        marginTop: 20,
+        borderTopWidth: 1,
+        borderColor: '#ddd'
+    }
 });
