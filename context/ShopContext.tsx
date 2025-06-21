@@ -29,7 +29,7 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
             addedDate: new Date(i.addedDate),
             maturity: { ...i.maturity, edited: new Date(i.maturity.edited) }
           }));
-          setShops(parsedShops);
+          setShops(parsedShops)
         }
       } catch (error) {
         console.error("Failed to load Shops.", error);

@@ -7,19 +7,25 @@ import { useGrocery } from '../../context/GroceryContext';
 import RenderItemList from '../../components/renderItemList';
 import { ItemSeparator } from '../../components/listComponents';
 import CommonStyles from '../../constants/commonStyle';
+import Slider from '@react-native-community/slider';
+import { useShopProximity } from '../../hooks/useShopProximity';
+
 
 
 type ViewMode = 'main' | 'seeShops' | 'addShop';
 
 export default function GroceryListScreen(): ReactNode {   
     const [viewMode, setViewMode] = useState<ViewMode>('main');
-    const { shops, setShops } = useShops(); // Use the context
+    const { shops, addShop } = useShops(); // Use the context
 
     // States for Add Shop Form
     const [newShopName, setNewShopName] = useState('');
     const [newShopType, setNewShopType] = useState<ShopType | undefined>(undefined);
     const [newShopLat, setNewShopLat] = useState('');
     const [newShopLon, setNewShopLon] = useState('');
+
+    const { proximityRadiusKm, setProximityRadiusKm } = useShopProximity();
+
 
     const { items } = useGrocery();
 
@@ -43,7 +49,7 @@ export default function GroceryListScreen(): ReactNode {
             latitude: lat,
             longitude: lon,
         };
-        setShops(prevShops => [...prevShops, newShop]);
+        addShop(newShop);
         Alert.alert("Success", "Shop added successfully!");
         // Reset form and view
         setNewShopName('');
@@ -130,6 +136,19 @@ export default function GroceryListScreen(): ReactNode {
                 renderItem={RenderItemList}
                 ItemSeparatorComponent={ItemSeparator}
             />
+
+            <Text style={CommonStyles.label}>
+                Shop Proximity Radius: {proximityRadiusKm.toFixed(1)} km
+            </Text>
+            <Slider
+                // style={}
+                minimumValue={0.1} // Set a minimum value for the slider
+                maximumValue={5.0} // Set a maximum value for the slider
+                step={0.1} // Define the step size for the slider
+                value={proximityRadiusKm} // Bind the slider's value to the hook's state
+                onValueChange={setProximityRadiusKm} // Update the hook's state when the slider changes
+            />
+
             <View style={styles.topButtonsRow}>
                 <View style={styles.buttonColumn}>
                     <Button title="See Shops" onPress={() => setViewMode('seeShops')} />

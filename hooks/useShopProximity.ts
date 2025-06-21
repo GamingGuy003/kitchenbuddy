@@ -1,10 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import * as Location from 'expo-location';
 import { useShops } from '../context/ShopContext';
 import { usePathname, useRouter } from 'expo-router';
 
-const PROXIMITY_RADIUS_KM = 0.5; // adjust as needed
 
 // Haversine formula to calculate distance between two lat/lon points
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -28,6 +27,9 @@ export function useShopProximity() {
     const { shops } = useShops();
     const router = useRouter();
     const pathname = usePathname();
+    const [proximityRadiusKm, setProximityRadiusKm] = useState<number>(0.5); // Default value
+
+
 
     useEffect(() => {
         const checkLocationAndNavigate = async () => {
@@ -42,7 +44,7 @@ export function useShopProximity() {
 
                 for (const shop of shops) {
                     const distance = calculateDistance(currentLocation.coords.latitude, currentLocation.coords.longitude, shop.latitude, shop.longitude);
-                    if (distance <= PROXIMITY_RADIUS_KM) {
+                    if (distance <= proximityRadiusKm) {
                         if (pathname !== '/groceryList') {
                             Alert.alert("Shop Nearby!", `You are near ${shop.name}. Switching to Grocery List.`);
                             router.replace('/groceryList');
@@ -57,5 +59,7 @@ export function useShopProximity() {
         };
 
         checkLocationAndNavigate();
-    }, [shops, router, pathname]); // Rerun if shops, router, or pathname changes
+    }, [shops, router, pathname, proximityRadiusKm]); // Rerun if shops, router, or pathname changes
+
+    return { proximityRadiusKm, setProximityRadiusKm };
 }
