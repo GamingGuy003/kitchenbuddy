@@ -23,12 +23,7 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
       try {
         const storedShops = await AsyncStorage.getItem(SHOPS_STORAGE_KEY);
         if (storedShops) {
-          const parsedShops: Shop[] = JSON.parse(storedShops).map((i: any) => ({
-            ...i,
-            expirationDate: i.expirationDate ? new Date(i.expirationDate) : undefined,
-            addedDate: new Date(i.addedDate),
-            maturity: { ...i.maturity, edited: new Date(i.maturity.edited) }
-          }));
+          const parsedShops: Shop[] = JSON.parse(storedShops);
           setShops(parsedShops);
         }
       } catch (error) {

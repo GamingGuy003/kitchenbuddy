@@ -13,7 +13,7 @@ type ViewMode = 'main' | 'seeShops' | 'addShop';
 
 export default function GroceryListScreen(): ReactNode {   
     const [viewMode, setViewMode] = useState<ViewMode>('main');
-    const { shops, setShops } = useShops(); // Use the context
+    const { shops, addShop } = useShops(); // Use the context
 
     // States for Add Shop Form
     const [newShopName, setNewShopName] = useState('');
@@ -43,7 +43,7 @@ export default function GroceryListScreen(): ReactNode {
             latitude: lat,
             longitude: lon,
         };
-        setShops(prevShops => [...prevShops, newShop]);
+        addShop(newShop);
         Alert.alert("Success", "Shop added successfully!");
         // Reset form and view
         setNewShopName('');
