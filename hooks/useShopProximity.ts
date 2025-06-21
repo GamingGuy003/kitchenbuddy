@@ -23,12 +23,21 @@ function deg2rad(deg: number): number {
   return deg * (Math.PI / 180);
 }
 
+// returns the current location
+export async function getLocation() {
+    try {
+        // request last known position for speed. if no position gets returned, we ask the os to fetch an accurate new one which might take longer
+        return await Location.getLastKnownPositionAsync({}) || await Location.getCurrentPositionAsync({});
+    } catch (error) {
+        console.error("Error getting location or navigating:", error);
+        Alert.alert("Location Error", "Could not fetch location. Make sure location services are enabled.");
+    }
+}
+
 export function useShopProximity( proximityRadiusKm: number = 0.5) {
     const { shops } = useShops();
     const router = useRouter();
     const pathname = usePathname();
-
-
 
     const appState = useRef(AppState.currentState);
     const [appStateVisible, setAppStateVisible] = useState(appState.current);
@@ -37,31 +46,25 @@ export function useShopProximity( proximityRadiusKm: number = 0.5) {
         // early return if app isnt in foreground
         if (appStateVisible !== 'active') return;
 
+        const currentLocation = await getLocation();
+        if (!currentLocation) return;
         
+        for (const shop of shops) {
+            const distance = calculateDistance(currentLocation.coords.latitude, currentLocation.coords.longitude, shop.latitude, shop.longitude);
+            if (distance <= proximityRadiusKm) {
+                if (pathname !== '/groceryList') {
+                    Alert.alert("Shop Nearby!", `You are near ${shop.name}. Switching to Grocery List.`);
+                    router.replace('/groceryList');
+                }
+                return; // Stop checking once a nearby shop is found
+            }
+            return; // Stop checking once a nearby shop is found
+        }
+
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
             Alert.alert('Permission Denied', 'Location permission is needed to find nearby shops.');
             return;
-        }
-        
-        try {
-            // request last known position for speed. if no position gets returned, we ask the os to fetch an accurate new one which might take longer
-            const currentLocation = await Location.getLastKnownPositionAsync({}) || await Location.getCurrentPositionAsync({});
-
-                for (const shop of shops) {
-                    const distance = calculateDistance(currentLocation.coords.latitude, currentLocation.coords.longitude, shop.latitude, shop.longitude);
-                    if (distance <= proximityRadiusKm) {
-                        if (pathname !== '/groceryList') {
-                            Alert.alert("Shop Nearby!", `You are near ${shop.name}. Switching to Grocery List.`);
-                            router.replace('/groceryList');
-                        }
-                        return; // Stop checking once a nearby shop is found
-                    }
-                    return; // Stop checking once a nearby shop is found
-                }
-        } catch (error) {
-            console.error("Error getting location or navigating:", error);
-            Alert.alert("Location Error", "Could not fetch location. Make sure location services are enabled.");
         }
     };
 
@@ -77,5 +80,4 @@ export function useShopProximity( proximityRadiusKm: number = 0.5) {
         checkLocationAndNavigate();
         return () => subscription.remove();
     }, []);
-
 }

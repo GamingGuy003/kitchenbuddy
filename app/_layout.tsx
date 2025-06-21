@@ -18,6 +18,7 @@ export default function RootLayout(): ReactNode {
       <AppLogic />
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name='shops' options={{ headerShown: false}} />
       </Stack>
     </ShopProvider>
     </GroceryProvider>

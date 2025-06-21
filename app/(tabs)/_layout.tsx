@@ -6,9 +6,6 @@ type IconName = keyof typeof Ionicons.glyphMap;
 
 
 export default function TabLayout() {
- 
-
-
   return (
     
     <Tabs screenOptions={({ route }) => ({
@@ -50,8 +47,7 @@ export default function TabLayout() {
         name="groceryList" // This will look for app/(tabs)/expiringSoon.tsx
         options={{
           title: 'Grocery List',
-        }}
-      />
+        }}/>
       <Tabs.Screen
         name="scan" // This will look for app/(tabs)/expiringSoon.tsx
         options={{

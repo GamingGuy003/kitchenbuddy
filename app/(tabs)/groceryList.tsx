@@ -1,5 +1,5 @@
-import React, { useState, ReactNode } from 'react';
-import { Text, View, StyleSheet, Alert, Button, TextInput, ScrollView, FlatList } from 'react-native';
+import React, { useState, ReactNode, useEffect } from 'react';
+import { Text, View, StyleSheet, Alert, Button, TextInput, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import { Shop, ShopType, SHOP_TYPES } from '../../types/shop';
 import { Picker } from '@react-native-picker/picker';
 import { useShops } from '../../context/ShopContext'; // Import useShops
@@ -8,135 +8,51 @@ import RenderItemList from '../../components/renderItemList';
 import { ItemSeparator } from '../../components/listComponents';
 import CommonStyles from '../../constants/commonStyle';
 import Slider from '@react-native-community/slider';
-import { useShopProximity } from '../../hooks/useShopProximity';
+import { calculateDistance, getLocation } from '../../hooks/useShopProximity';
+import { LocationObject } from 'expo-location';
+import { IngredientCategory } from '../../types/ingredient';
+import { router } from 'expo-router';
 
 
 
 type ViewMode = 'main' | 'seeShops' | 'addShop';
 
-export default function GroceryListScreen(): ReactNode {   
-    const [viewMode, setViewMode] = useState<ViewMode>('main');
-    const { shops, addShop } = useShops(); // Use the context
-
-    // States for Add Shop Form
-    const [newShopName, setNewShopName] = useState('');
-    const [newShopType, setNewShopType] = useState<ShopType | undefined>(undefined);
-    const [newShopLat, setNewShopLat] = useState('');
-    const [newShopLon, setNewShopLon] = useState('');
-
-    const [ proximityRadiusKm, setProximityRadiusKm ] = useState<number>(0.5);
-
+export default function GroceryListScreen(): ReactNode {
+    const { shops } = useShops(); // Use the context
 
     const { items } = useGrocery();
 
-    const handleAddShop = () => {
-        if (!newShopName.trim() || newShopType === undefined || !newShopLat.trim() || !newShopLon.trim()) {
-            Alert.alert("Validation Error", "All shop fields are required.");
-            return;
-        }
-        const lat = parseFloat(newShopLat);
-        const lon = parseFloat(newShopLon);
+    const [ proximityRadiusKm, setProximityRadiusKm ] = useState<number>(0.5);
+    const [location, setLocation] = useState<LocationObject | undefined>();
 
-        if (isNaN(lat) || isNaN(lon)) {
-            Alert.alert("Validation Error", "Latitude and Longitude must be valid numbers.");
-            return;
+    useEffect(() => {
+        const fetchLocation = async () => {
+            const location = await getLocation();
+            setLocation(location);
         }
 
-        const newShop: Shop = {
-            id: String(Date.now()), // Simple unique ID
-            name: newShopName,
-            type: newShopType!, // Use non-null assertion as we've checked for undefined
-            latitude: lat,
-            longitude: lon,
-        };
-        addShop(newShop);
-        Alert.alert("Success", "Shop added successfully!");
-        // Reset form and view
-        setNewShopName('');
-        setNewShopType(undefined);
-        setNewShopLat('');
-        setNewShopLon('');
-        setViewMode('main');
-    };
-
+        fetchLocation();
+    }, []);
     
-    if (viewMode === 'seeShops') {
-        return (
-            <View style={CommonStyles.pageContainer}>
-                <Text style={styles.title}>Registered Shops</Text>
-                <FlatList
-                    data={shops}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => (
-                        <View style={styles.shopItem}>
-                            <Text style={styles.shopName}>{item.name} ({item.type})</Text>
-                            <Text>Lat: {item.latitude.toFixed(4)}, Lon: {item.longitude.toFixed(4)}</Text>
-                        </View>
-                    )}
-                    ListEmptyComponent={<Text>No shops registered yet.</Text>}
-                />
-                <Button title="Back to Grocery List" onPress={() => setViewMode('main')} />
-            </View>
-        );
+    // filter shops by what is in range
+    const shopsWithinRange = () => {
+        return location ? shops.filter(shop => calculateDistance(shop.latitude, shop.longitude, location?.coords.latitude, location?.coords.longitude) < proximityRadiusKm) : shops;
     }
 
-    if (viewMode === 'addShop') {
-        return (
-            <ScrollView contentContainerStyle={CommonStyles.pageContainer}>
-                <Text style={styles.title}>Add New Shop</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Shop Name"
-                    value={newShopName}
-                    onChangeText={setNewShopName}
-                />
-                <Text style={styles.label}>Shop Type</Text>
-                <Picker
-                    style={styles.picker}
-                    itemStyle={styles.pickerItem}
-
-                    selectedValue={newShopType}
-                    onValueChange={(itemValue) => setNewShopType(itemValue)}
-                >
-                    <Picker.Item label="Select Shop Type..." value={undefined} />
-                    {SHOP_TYPES.map(type => (
-                        <Picker.Item key={type} label={type} value={type} />))}
-                </Picker>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Latitude"
-                    value={newShopLat}
-                    onChangeText={setNewShopLat}
-                    keyboardType="numeric"
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Longitude"
-                    value={newShopLon}
-                    onChangeText={setNewShopLon}
-                    keyboardType="numeric"
-                />
-                <View style={styles.buttonContainer}>
-                    <Button title="Save Shop" onPress={handleAddShop} />
-                </View>
-                <View style={styles.buttonContainer}>
-                    <Button title="Cancel" onPress={() => setViewMode('main')} color="grey" />
-                </View>
-            </ScrollView>
-        );
+    // return only items where shops exist in proximity that sell category
+    const itemsWithinRange = () => {
+        return items.filter(item => {
+            const shops = shopsWithinRange();
+            for (const shop of shops) {
+                if (shop.categories.find(category => category === item.item.category)) return true;
+            }
+            return false;
+        });
     }
 
     // Main view
     return (
         <View style={CommonStyles.pageContainer}>
-            <FlatList
-                style={CommonStyles.list}
-                keyExtractor={(item) => item.id}
-                data={items}
-                renderItem={RenderItemList}
-                ItemSeparatorComponent={ItemSeparator}
-            />
-
             <Text style={CommonStyles.label}>
                 Shop Proximity Radius: {proximityRadiusKm.toFixed(1)} km
             </Text>
@@ -149,12 +65,20 @@ export default function GroceryListScreen(): ReactNode {
                 onValueChange={setProximityRadiusKm} // Update the hook's state when the slider changes
             />
 
+            <FlatList
+                style={CommonStyles.list}
+                keyExtractor={(item) => item.id}
+                data={itemsWithinRange()}
+                renderItem={RenderItemList}
+                ItemSeparatorComponent={ItemSeparator}
+            />
+
             <View style={styles.topButtonsRow}>
                 <View style={styles.buttonColumn}>
-                    <Button title="See Shops" onPress={() => setViewMode('seeShops')} />
+                    <Button title="See Shops" onPress={() => router.push(`/shops/listShops`)} />
                 </View>
                 <View style={styles.buttonColumn}>
-                    <Button title="Add Shop" onPress={() => setViewMode('addShop')} />
+                    <Button title="Add Shop" onPress={() => router.push(`/shops/addShop`)} />
                 </View>
             </View>
             {/* Your actual grocery list items will go here */}
