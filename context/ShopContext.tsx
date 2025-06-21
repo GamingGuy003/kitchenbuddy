@@ -65,7 +65,7 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
   // delete shop from storage
   const deleteShop = (id: string) => {
     const newShop = shops.filter(i => i.id !== id);
-    saveShop(newShop);
+    setShops(newShop);
   };
 
   const getShop = (id: string) => {
