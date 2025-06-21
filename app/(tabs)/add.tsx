@@ -5,6 +5,7 @@ import React, { useState, useEffect, ReactNode } from 'react';
 import { Alert, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useGrocery } from '../../context/GroceryContext';
+import CommonStyles from '../../constants/commonStyle';
 
 export default function AddIngredientScreen(): ReactNode {
     const { addIngredient } = useIngredients();
@@ -51,7 +52,7 @@ export default function AddIngredientScreen(): ReactNode {
     }
 
     return (
-        <View style={{flex: 1}}>
+        <View style={CommonStyles.pageContainer}>
             <IngredientForm
                 leftButton={{ onSubmit: handleAddIngredient, title: 'Add to Pantry' }}
                 rightButton={{ onSubmit: handleAddItem, title: 'Add to Grocery list'}}

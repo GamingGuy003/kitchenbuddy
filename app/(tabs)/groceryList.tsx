@@ -74,69 +74,14 @@ export default function GroceryListScreen(): ReactNode {
                 ItemSeparatorComponent={ItemSeparator}
             />
 
-            <View style={styles.topButtonsRow}>
-                <View style={styles.buttonColumn}>
+            <View style={{...CommonStyles.rowView, ...CommonStyles.bottomButtons}}>
+                <View style={CommonStyles.rowButton}>
                     <Button title="See Shops" onPress={() => router.push(`/shops/listShops`)} />
                 </View>
-                <View style={styles.buttonColumn}>
+                <View style={CommonStyles.rowButton}>
                     <Button title="Add Shop" onPress={() => router.push(`/shops/addShop`)} />
                 </View>
             </View>
-            {/* Your actual grocery list items will go here */}
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    label: {
-        fontSize: 16,
-        margin: 5,
-        fontWeight: '500',
-        width: '100%', // Ensure label takes full width
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 15,
-    },
-    picker: {
-        width: '100%',
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingHorizontal: 10,
-        borderRadius: 5,
-        width: '100%',
-    },
-    pickerItem: {
-        // Add any specific styles for picker items if needed
-        // For example, fontSize: 16,
-    },
-    shopItem: {
-        padding: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-    },
-    shopName: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    buttonContainer: {
-        marginTop: 10,
-        width: '80%', // Or adjust as needed
-        alignSelf: 'center',
-    },
-    topButtonsRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-around', // Distributes space around items
-        width: '100%', // Take full width to allow columns to spread
-        marginBottom: 20, // Add some space below the buttons
-    },
-    buttonColumn: {
-        width: '45%', // Each button column takes up a portion of the row
-        // If you want a small gap between buttons, you could add marginHorizontal here
-    }
-});

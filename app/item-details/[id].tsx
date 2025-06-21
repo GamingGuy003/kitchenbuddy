@@ -8,6 +8,7 @@ import IngredientForm from "../../components/IngredientForm";
 import { Ingredient } from "../../types/ingredient";
 import { useIngredients } from "../../context/IngredientContext";
 import dayDifference from "../../constants/timeDifference";
+import CommonStyles from "../../constants/commonStyle";
 
 export default function ItemDetailScreen(): ReactNode {
     const [isNavigatingAway, setIsNavigatingAway] = useState<boolean>(false);
@@ -131,7 +132,7 @@ export default function ItemDetailScreen(): ReactNode {
     item.item.expirationDate && expectedExpiry.setDate(expectedExpiry.getDate() + dayDifference(item.item.expirationDate, item.item.addedDate));
 
     return (
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView style={CommonStyles.pageContainer}>
             <IngredientForm
                 initialValues={{
                     ...item.item,
@@ -141,8 +142,8 @@ export default function ItemDetailScreen(): ReactNode {
                 rightButton={{ onSubmit: handleBought, title: 'Bought' }}
                 datePrefilled={true}
             />
-            <View style={styles.deleteContainer}>
-                <Button title='Delete Ingredient' color='red' onPress={handleDeleteItem} />
+            <View style={{ marginTop: 20 }}>
+                <Button title='Delete Ingredient' color='red' onPress={handleDeleteItem}/>
             </View>
         </KeyboardAwareScrollView>
     );
@@ -154,8 +155,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20
-    },
-    deleteContainer: {
-        marginHorizontal: 20,
     },
 });

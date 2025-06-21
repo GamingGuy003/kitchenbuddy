@@ -8,7 +8,7 @@ import CommonStyles from "../constants/commonStyle";
 // renders a specific ingredient for the list view
 export default function renderIngredientItem({ item, hideMaturityWarning }: { item: Ingredient, hideMaturityWarning?: boolean }) {
     return (<TouchableOpacity onPress={() => router.push(`/ingredient-details/${item.id}`)}>
-        <View style={styles.ingredientView}>
+        <View style={CommonStyles.item}>
             <View style={styles.info}>
                 <Text style={CommonStyles.ingredientContainerTitle}>{item.name} {stringifyAmount(item.amount) || null}</Text>
                 { item.brand && <Text>Brand: {item.brand}</Text> }
@@ -33,14 +33,6 @@ export default function renderIngredientItem({ item, hideMaturityWarning }: { it
 };
 
 const styles = StyleSheet.create({
-    ingredientView: {
-        padding: 10,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        flexDirection: 'row',
-        gap: 5
-    },
     badge: {
         justifyContent: 'center',
         alignItems: 'center',

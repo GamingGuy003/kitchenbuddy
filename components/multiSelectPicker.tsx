@@ -25,7 +25,7 @@ const CustomMultiSelect = ({ data, selectedItems, onSelectionChange }: CustomMul
     const checkbox: IconName = 'check';
     return (
       <TouchableOpacity
-        style={[styles.item, isSelected && styles.selectedItem]}
+        style={[CommonStyles.item, isSelected && { borderColor: '#999' }]}
         onPress={() => handleSelect(item)}
       >
         <Text style={[{fontSize: 16}, isSelected && { fontWeight: '500' }]}>{item}</Text>
@@ -48,25 +48,6 @@ const CustomMultiSelect = ({ data, selectedItems, onSelectionChange }: CustomMul
 };
 
 const styles = StyleSheet.create({
-  item: {
-        padding: 10,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        gap: 5
-  },
-  selectedItem: {
-    color: 'cornflowerblue',
-    borderColor: '#999',
-  },
-  title: {
-    fontSize: 16,
-  },
-  selectedTitle: {
-    fontWeight: 'bold',
-  },
   checkbox: {
     width: 24,
     height: 24,

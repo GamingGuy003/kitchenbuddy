@@ -7,6 +7,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useGrocery } from '../../context/GroceryContext';
+import CommonStyles from '../../constants/commonStyle';
 
 export default function IngredientDetailScreen(): ReactNode {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -125,13 +126,13 @@ export default function IngredientDetailScreen(): ReactNode {
     }
 
     return (
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView style={CommonStyles.pageContainer}>
             <IngredientForm
                 initialValues={{...ingredient}}
                 leftButton={{ onSubmit: handleFormSubmit, title: 'Save' }}
                 rightButton={{ onSubmit: handleAddGrocery, title: 'Add to groceries' }}
             />
-            <View style={styles.deleteContainer}>
+            <View style={{ marginTop: 20 }}>
                 <Button title='Delete Ingredient' color='red' onPress={handleDeleteIngredient} />
             </View>
         </KeyboardAwareScrollView>
@@ -139,9 +140,6 @@ export default function IngredientDetailScreen(): ReactNode {
 }
 
 const styles = StyleSheet.create({
-    deleteContainer: {
-        marginHorizontal: 20,
-    },
     centered: {
         flex: 1,
         justifyContent: 'center',

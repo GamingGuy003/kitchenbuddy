@@ -2,6 +2,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { ReactNode, useState } from 'react';
 import { Button, StyleSheet, Text, View, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
+import CommonStyles from '../../constants/commonStyle';
 
 // Define a type for the product data we expect (can be expanded)
 interface ProductInfo {
@@ -30,7 +31,7 @@ export default function ScanScreen(): ReactNode {
   if (!permission.granted) {
     // Camera permissions are not granted yet.
     return (
-      <View style={styles.container}>
+      <View style={CommonStyles.pageContainer}>
         <Text style={styles.message}>We need your permission to show the camera</Text>
         <Button onPress={requestPermission} title="Grant Permission" />
       </View>
@@ -107,10 +108,10 @@ export default function ScanScreen(): ReactNode {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{...CommonStyles.pageContainer, flex: 1, justifyContent: 'center' }}>
       {!productInfo && !isLoading && !apiError && (
         <CameraView
-          style={styles.camera}
+          style={{ flex: 1 }}
           barcodeScannerSettings={{
             barcodeTypes: ["ean13", "ean8", "upc_a", "upc_e", "qr"], // Added more common types
           }}
@@ -158,10 +159,6 @@ export default function ScanScreen(): ReactNode {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
   centeredContent: {
     flex: 1,
     justifyContent: 'center',
@@ -171,9 +168,6 @@ const styles = StyleSheet.create({
   message: {
     textAlign: 'center',
     paddingBottom: 10,
-  },
-  camera: {
-    flex: 1,
   },
   scannedDataText: {
     textAlign: 'center',
@@ -197,13 +191,13 @@ const styles = StyleSheet.create({
   },
   buttonGroup: {
     marginTop: 20,
+    gap: 10,
     width: '80%', // Adjust as needed
   },
   productImage: {
-    width: 150,
-    height: 150,
+    maxWidth: '80%',
+    minWidth: '80%',
+    aspectRatio: 1,
     marginBottom: 15,
-    borderWidth: 1, // Optional: for a border around the image
-    borderColor: '#ddd', // Optional: border color
   }
 });

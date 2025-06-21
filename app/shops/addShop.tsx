@@ -93,18 +93,9 @@ export default function addShop() {
                     onChangeText={setShopLon}
                     keyboardType="numeric"
                 />
-                <View style={styles.bottomButtons}>
+                <View style={CommonStyles.bottomButtons}>
                     <Button title="Save Shop" onPress={handleAddShop} />
                 </View>
             </View>
         );
 }
-
-const styles = StyleSheet.create({
-    bottomButtons: {
-        paddingTop: 20,
-        marginTop: 20,
-        borderTopWidth: 1,
-        borderColor: '#ddd'
-    }
-});

@@ -12,10 +12,10 @@ export default function listShops() {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <TouchableOpacity onPress={() => deleteShop(item.id)}>
-                        <View style={styles.shopView}>
+                        <View style={{...CommonStyles.item, flexDirection: 'column' }}>
                             <Text style={CommonStyles.ingredientContainerTitle}>{item.name} ({item.type})</Text>
                             <Text>Lat: {item.latitude.toFixed(4)}, Lon: {item.longitude.toFixed(4)}</Text>
-                            <Text>Categories: {item.categories.join(', ')}</Text>
+                            { item.categories.length > 0 && <Text>Categories: {item.categories.join(', ')}</Text> }
                         </View>
                     </TouchableOpacity>
                 )}
@@ -25,13 +25,3 @@ export default function listShops() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    shopView: {
-        padding: 10,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        gap: 5
-    },
-});
