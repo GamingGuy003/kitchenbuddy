@@ -1,11 +1,17 @@
-import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View, SafeAreaView } from "react-native";
 import CommonStyles from "../../constants/commonStyle";
 import { Picker } from "@react-native-picker/picker";
 import { Shop, SHOP_TYPES, ShopType } from "../../types/shop";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useShops } from "../../context/ShopContext";
-import { IngredientCategory } from "../../types/ingredient";
 import { router } from "expo-router";
+import CustomMultiSelect from '../../components/multiSelectPicker';
+import { CATEGORIES } from '../../constants/ingredientProperties';
+
+
+
+
+
 
 export default function addShop() {
     const { shops, addShop, deleteShop } = useShops();
@@ -14,7 +20,9 @@ export default function addShop() {
     const [shopType, setShopType] = useState<ShopType | undefined>(undefined);
     const [shopLat, setShopLat] = useState('');
     const [shopLon, setShopLon] = useState('');
-    const [categories, setCategories] = useState<IngredientCategory[]>([]);
+
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
 
     const handleAddShop = () => {
         if (!shopName.trim() || shopType === undefined || !shopLat.trim() || !shopLon.trim()) {
@@ -33,7 +41,7 @@ export default function addShop() {
             id: String(Date.now()), // Simple unique ID
             name: shopName,
             type: shopType!, // Use non-null assertion as we've checked for undefined
-            categories: categories,
+            categories: selectedCategories,
             latitude: lat,
             longitude: lon,
         };
@@ -45,10 +53,11 @@ export default function addShop() {
         setShopType(undefined);
         setShopLat('');
         setShopLon('');
+        setSelectedCategories([]);
         router.back();
     };
 
-    return (<ScrollView contentContainerStyle={CommonStyles.pageContainer}>
+    return (<View>
                 <TextInput
                     style={CommonStyles.input}
                     placeholder="Shop Name"
@@ -61,6 +70,15 @@ export default function addShop() {
                     {SHOP_TYPES.map(type => (
                         <Picker.Item key={type} label={type} value={type} />))}
                 </Picker>
+                <SafeAreaView>
+                    <Text style={CommonStyles.label}>Shop Categories</Text>
+
+                    <CustomMultiSelect data={CATEGORIES}
+                                       selectedItems={selectedCategories}
+                                       onSelectionChange={setSelectedCategories} />
+                </SafeAreaView>
+                <Text style={CommonStyles.label}>Shop Location</Text>
+
                 <TextInput
                     style={CommonStyles.input}
                     placeholder="Latitude"
@@ -78,7 +96,7 @@ export default function addShop() {
                 <View style={styles.bottomButtons}>
                     <Button title="Save Shop" onPress={handleAddShop} />
                 </View>
-            </ScrollView>
+            </View>
         );
 }
 

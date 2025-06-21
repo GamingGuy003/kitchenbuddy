@@ -15,6 +15,7 @@ export default function listShops() {
                         <View style={styles.shopView}>
                             <Text style={CommonStyles.ingredientContainerTitle}>{item.name} ({item.type})</Text>
                             <Text>Lat: {item.latitude.toFixed(4)}, Lon: {item.longitude.toFixed(4)}</Text>
+                            <Text>Categories: {item.categories.join(', ')}</Text>
                         </View>
                     </TouchableOpacity>
                 )}
