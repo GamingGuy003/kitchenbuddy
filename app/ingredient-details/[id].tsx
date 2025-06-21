@@ -6,12 +6,14 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useGrocery } from '../../context/GroceryContext';
 
 export default function IngredientDetailScreen(): ReactNode {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
     const navigation = useNavigation(); // Get navigation object
     const { getIngredientById, updateIngredient, deleteIngredient } = useIngredients();
+    const { addItem } = useGrocery();
 
     const [ingredient, setIngredient] = useState<Ingredient | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -48,6 +50,22 @@ export default function IngredientDetailScreen(): ReactNode {
 
     }, [id, getIngredientById, navigation, router, isNavigatingAway]);
 
+    // add item to grocery list
+    const handleAddGrocery = () => {
+        if (ingredient) {
+            setIsNavigatingAway(true);
+            addItem({ item: ingredient });
+            Alert.alert(
+                'Success',
+                'Added ingredient to grocery list.',
+                [{ text: 'OK', onPress: () => {
+                    router.back();
+                }}]
+            );
+        }
+    };
+
+    // save changes
     const handleFormSubmit = (data: Partial<Ingredient>) => {
         if (!data.name || !data.name.trim()) {
             Alert.alert("Validation Error", "Ingredient name is required.");
@@ -66,6 +84,7 @@ export default function IngredientDetailScreen(): ReactNode {
         }
     };
 
+    // delete ingredient from list
     const handleDeleteIngredient = () => {
         if (ingredient) {
             Alert.alert("Confirm Delete", "Are you sure you want to delete this ingredient?", [
@@ -107,6 +126,7 @@ export default function IngredientDetailScreen(): ReactNode {
             <IngredientForm
                 initialValues={{...ingredient}}
                 leftButton={{ onSubmit: handleFormSubmit, title: 'Save' }}
+                rightButton={{ onSubmit: handleAddGrocery, title: 'Add to groceries' }}
             />
             <View style={styles.deleteContainer}>
                 <Button title='Delete Ingredient' color='red' onPress={handleDeleteIngredient} />
