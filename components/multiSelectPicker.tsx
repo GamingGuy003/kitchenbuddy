@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { ItemSeparator } from './listComponents';
+import { FontAwesome5 } from '@expo/vector-icons';
+import CommonStyles from '../constants/commonStyle';
 
+type IconName = keyof typeof FontAwesome5.glyphMap;
 
 interface CustomMultiSelectProps {
   data: string[];
@@ -12,31 +16,21 @@ interface CustomMultiSelectProps {
 const CustomMultiSelect = ({ data, selectedItems, onSelectionChange }: CustomMultiSelectProps) => {
   // handleSelect now works with a simple string item.
   const handleSelect = (item: string) => {
-    let newSelectedItems;
-
-    if (selectedItems.includes(item)) {
-      // If the item is already selected, remove it.
-      newSelectedItems = selectedItems.filter((selectedItem) => selectedItem !== item);
-
-    } else {
-        // If the item is not selected, add it.
-      newSelectedItems = [...selectedItems, item];
-
-    }
-    onSelectionChange(newSelectedItems);
+    // If the item is already selected, remove, otherwise add it.
+    onSelectionChange((selectedItems.includes(item)) ? selectedItems.filter((selectedItem) => selectedItem !== item) : [...selectedItems, item]);
   };
 
-  // renderItem now expects a string.
   const renderItem = ({ item }: { item: string }) => {
     const isSelected = selectedItems.includes(item);
+    const checkbox: IconName = 'check';
     return (
       <TouchableOpacity
         style={[styles.item, isSelected && styles.selectedItem]}
         onPress={() => handleSelect(item)}
       >
-        <Text style={[styles.title, isSelected && styles.selectedTitle]}>{item}</Text>
-        <View style={[styles.checkbox, isSelected && styles.selectedCheckbox]}>
-          {isSelected && <Text style={styles.checkmark}>✓</Text>}
+        <Text style={[{fontSize: 16}, isSelected && { fontWeight: '500' }]}>{item}</Text>
+        <View style={styles.checkbox}>
+          {isSelected && <FontAwesome5 name={checkbox} color={'#3596DE'}/>}
         </View>
       </TouchableOpacity>
     );
@@ -47,7 +41,7 @@ const CustomMultiSelect = ({ data, selectedItems, onSelectionChange }: CustomMul
       data={ data }
       renderItem={renderItem}
       keyExtractor={(item) => item}
-
+      ItemSeparatorComponent={ItemSeparator}
       extraData={selectedItems}
     />
   );
@@ -55,43 +49,32 @@ const CustomMultiSelect = ({ data, selectedItems, onSelectionChange }: CustomMul
 
 const styles = StyleSheet.create({
   item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 8,
-    marginHorizontal: 16,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
+        padding: 10,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 5
   },
   selectedItem: {
-    backgroundColor: '#e0e7ff',
-    borderColor: '#6366f1',
-  },
-  checkmark: {
-    fontSize: 16,
-    color: 'white',
-    fontWeight: 'bold',
+    color: 'cornflowerblue',
+    borderColor: '#999',
   },
   title: {
     fontSize: 16,
   },
   selectedTitle: {
     fontWeight: 'bold',
-    color: '#4f46e5',
   },
   checkbox: {
     width: 24,
     height: 24,
-    borderRadius: 4,
+    borderRadius: 5,
     borderWidth: 2,
-    borderColor: '#ccc',
+    borderColor: '#ddd',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  selectedCheckbox: {
-    backgroundColor: '#6366f1',
-    borderColor: '#4f46e5',
   },
 });
 

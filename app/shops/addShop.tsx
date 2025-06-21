@@ -57,7 +57,7 @@ export default function addShop() {
         router.back();
     };
 
-    return (<View>
+    return (<View style={CommonStyles.pageContainer}>
                 <TextInput
                     style={CommonStyles.input}
                     placeholder="Shop Name"
@@ -71,7 +71,7 @@ export default function addShop() {
                         <Picker.Item key={type} label={type} value={type} />))}
                 </Picker>
                 <SafeAreaView>
-                    <Text style={CommonStyles.label}>Shop Categories</Text>
+                    <Text style={{...CommonStyles.label, marginBottom: 10 }}>Shop Categories</Text>
 
                     <CustomMultiSelect data={CATEGORIES}
                                        selectedItems={selectedCategories}
