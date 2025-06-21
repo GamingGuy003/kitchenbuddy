@@ -1,13 +1,13 @@
 import { Ingredient } from "./ingredient"
 
 export type GroceryListItem = {
-    id?: string,
+    id: string,
     item: Partial<Ingredient>
 }
 
 export type GroceryContextType = {
   items: GroceryListItem[];
-  addItem: (item: GroceryListItem) => void;
+  addItem: (item: Partial<GroceryListItem>) => void;
   updateItem: (item: GroceryListItem) => void;
   deleteItem: (id: string) => void;
   clear: () => void;

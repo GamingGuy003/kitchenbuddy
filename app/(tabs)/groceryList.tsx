@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Alert, Button, TextInput, FlatList, ScrollView, Platform } from 'react-native';
+import React, { useState, ReactNode } from 'react';
+import { Text, View, StyleSheet, Alert, Button, TextInput, ScrollView, FlatList } from 'react-native';
 import { Shop, ShopType, SHOP_TYPES } from '../../types/shop';
 import { Picker } from '@react-native-picker/picker';
 import { useShops } from '../../context/ShopContext'; // Import useShops
+import { useGrocery } from '../../context/GroceryContext';
+import RenderItemList from '../../components/renderItemList';
+import { ItemSeparator } from '../../components/listComponents';
+import CommonStyles from '../../constants/commonStyle';
 
 
 type ViewMode = 'main' | 'seeShops' | 'addShop';
 
-export default function GroceryListScreen() {
-    
+export default function GroceryListScreen(): ReactNode {   
     const [viewMode, setViewMode] = useState<ViewMode>('main');
     const { shops, setShops } = useShops(); // Use the context
 
@@ -17,6 +20,8 @@ export default function GroceryListScreen() {
     const [newShopType, setNewShopType] = useState<ShopType | undefined>(undefined);
     const [newShopLat, setNewShopLat] = useState('');
     const [newShopLon, setNewShopLon] = useState('');
+
+    const { items } = useGrocery();
 
     const handleAddShop = () => {
         if (!newShopName.trim() || newShopType === undefined || !newShopLat.trim() || !newShopLon.trim()) {
@@ -51,7 +56,7 @@ export default function GroceryListScreen() {
     
     if (viewMode === 'seeShops') {
         return (
-            <View style={styles.container}>
+            <View style={CommonStyles.pageContainer}>
                 <Text style={styles.title}>Registered Shops</Text>
                 <FlatList
                     data={shops}
@@ -71,7 +76,7 @@ export default function GroceryListScreen() {
 
     if (viewMode === 'addShop') {
         return (
-            <ScrollView contentContainerStyle={styles.container}>
+            <ScrollView contentContainerStyle={CommonStyles.pageContainer}>
                 <Text style={styles.title}>Add New Shop</Text>
                 <TextInput
                     style={styles.input}
@@ -117,9 +122,14 @@ export default function GroceryListScreen() {
 
     // Main view
     return (
-        <View style={styles.container}>
-            
-            
+        <View style={CommonStyles.pageContainer}>
+            <FlatList
+                style={CommonStyles.list}
+                keyExtractor={(item) => item.id}
+                data={items}
+                renderItem={RenderItemList}
+                ItemSeparatorComponent={ItemSeparator}
+            />
             <View style={styles.topButtonsRow}>
                 <View style={styles.buttonColumn}>
                     <Button title="See Shops" onPress={() => setViewMode('seeShops')} />
@@ -134,12 +144,6 @@ export default function GroceryListScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-    },
     label: {
         fontSize: 16,
         margin: 5,

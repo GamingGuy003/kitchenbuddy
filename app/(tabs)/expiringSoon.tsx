@@ -1,6 +1,6 @@
 import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient } from '../../types/ingredient';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { ReactNode, useCallback, useMemo, useState } from 'react';
 import { SectionList, StyleSheet, Text, TextInput, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import debounce from 'lodash.debounce';
@@ -9,7 +9,7 @@ import dayDifference from '../../constants/timeDifference';
 import CommonStyles from '../../constants/commonStyle';
 import { ItemSeparator, ListEmpty, SectionHeader } from '../../components/listComponents';
 
-export default function ExpiringSoonScreen() {
+export default function ExpiringSoonScreen(): ReactNode {
     const { ingredients } = useIngredients();
     const [search, setSearch] = useState('');
     const [daysThreshold, setDaysThreshold] = useState<number>(0); // Defaults to what spoils today (in 0 days)

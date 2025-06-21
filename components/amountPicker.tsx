@@ -2,9 +2,10 @@ import { View, Text, TextInput } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import CommonStyles from "../constants/commonStyle";
 import { IngredientAmountKind } from "../types/ingredient";
+import { ReactNode } from "react";
 
 // big brain arguments
-const AmountPicker = (
+export default function AmountPicker(
     {
         setAmountKind,
         setAmountValue,
@@ -19,7 +20,7 @@ const AmountPicker = (
         amountKind: IngredientAmountKind,
         amountValue: string,
         amountUnit?: string
-    }) => {
+    }): ReactNode {
 
     // shows the amount units
     const units = {
@@ -48,5 +49,3 @@ const AmountPicker = (
         </View>
     );
 }
-
-export default AmountPicker;

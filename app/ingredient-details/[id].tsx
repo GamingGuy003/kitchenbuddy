@@ -3,11 +3,11 @@ import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient } from '../../types/ingredient';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-export default function IngredientDetailScreen() {
+export default function IngredientDetailScreen(): ReactNode {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
     const navigation = useNavigation(); // Get navigation object
@@ -101,13 +101,12 @@ export default function IngredientDetailScreen() {
     if (!ingredient) {
         return <View style={styles.centered}><Text>Ingredient not found.</Text></View>;
     }
-    
+
     return (
         <KeyboardAwareScrollView>
             <IngredientForm
                 initialValues={{...ingredient}}
-                onSubmit={handleFormSubmit}
-                submitButtonTitle='Save Changes'
+                leftButton={{ onSubmit: handleFormSubmit, title: 'Save' }}
             />
             <View style={styles.deleteContainer}>
                 <Button title='Delete Ingredient' color='red' onPress={handleDeleteIngredient} />

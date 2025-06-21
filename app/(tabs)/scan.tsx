@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { Button, StyleSheet, Text, View, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 
@@ -14,7 +14,7 @@ interface ProductInfo {
   // Add other fields you might want to use from the API response
 }
 
-export default function ScanScreen() {
+export default function ScanScreen(): ReactNode {
   const [permission, requestPermission] = useCameraPermissions();
   const [scannedData, setScannedData] = useState<string | null>(null);
   const [productInfo, setProductInfo] = useState<ProductInfo | null>(null);

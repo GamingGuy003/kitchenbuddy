@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Stack } from 'expo-router';
 import { IngredientProvider } from '../context/IngredientContext';
 import { ShopProvider } from '../context/ShopContext';
 import { GroceryProvider } from '../context/GroceryContext';
 
-export default function RootLayout() {
+export default function RootLayout(): ReactNode {
   return (
     <IngredientProvider>
     <GroceryProvider>

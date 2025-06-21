@@ -1,7 +1,7 @@
 import { EXPIRY_ESTIMATES, ExpiryEstimate, CATEGORIES, LOCATIONS, CONFECTIONS, RIPENESS } from '../constants/ingredientProperties';
 import { Ingredient, IngredientAmount, IngredientAmountKind, Maturity } from '../types/ingredient'; // Assuming IngredientData is the type for form data
 import { Picker } from '@react-native-picker/picker';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -14,12 +14,16 @@ import AmountPicker from './amountPicker';
 
 interface IngredientFormProps {
     initialValues?: Partial<Ingredient>;
-    onSubmit: (data: Partial<Ingredient>) => void;
-    submitButtonTitle: string;
-    datePrefilled?: boolean; // if date should be prefilled, yet still modifiable
+    // if date should be prefilled, yet still modifiable
+    datePrefilled?: boolean;
+    // callback to run if left submit button gets pressed
+    leftButton: { onSubmit: (data: Partial<Ingredient>) => void; title: string };
+    // callback to run if right submit button gets pressed. this one is optional and it not present, only left button will be used
+    rightButton?: { onSubmit: (data: Partial<Ingredient>) => void; title: string }
+    
 }
 
-export default function IngredientForm({ initialValues, onSubmit, submitButtonTitle, datePrefilled }: IngredientFormProps) {
+export default function IngredientForm({ initialValues, datePrefilled, leftButton, rightButton }: IngredientFormProps): ReactNode {
     const [name, setName] = useState<string | undefined>(initialValues?.name);
     const [category, setCategory] = useState<string | undefined>(initialValues?.category);
     const [location, setLocation] = useState<string | undefined>(initialValues?.location);
@@ -90,8 +94,25 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
         }
     }
 
-    const handleSubmit = () => {
-        onSubmit({
+    // will handle the left button press
+    const handleButtonLeft = () => {
+        leftButton.onSubmit({
+            name,
+            category,
+            location,
+            confectionType,
+            expirationDate,
+            brand,
+            open: open || false,
+            maturity,
+            frozen: freezeInterval,
+            amount: convertAmount(),
+        })
+    }
+
+    // will only handle the right button press if function has been provided
+    const handleButtonRight = () => {
+        rightButton && rightButton.onSubmit({
             name,
             category,
             location,
@@ -223,15 +244,21 @@ export default function IngredientForm({ initialValues, onSubmit, submitButtonTi
                     <Text style={CommonStyles.label}>Or Estimate Expiry:</Text>
                     <View style={CommonStyles.rowView}>
                         {EXPIRY_ESTIMATES.map((estimate: ExpiryEstimate) => (
-                            <View key={estimate.label} style={styles.estimateButton}>
+                            <View key={estimate.label} style={CommonStyles.rowButton}>
                                 <Button title={estimate.label} onPress={() => handleSelectEstimate(estimate.days)} />
                             </View>
                         ))}
                     </View>
                 </View> : null }
 
-                <View style={{ marginTop: 20 }}>
-                    <Button title={submitButtonTitle} onPress={handleSubmit} />
+                <View style={{ ...CommonStyles.rowView, marginTop: 20 }}>
+                    <View style={CommonStyles.rowButton}>
+                        <Button title={leftButton.title} onPress={handleButtonLeft}/>
+                    </View>
+                    { rightButton &&
+                    <View style={CommonStyles.rowButton}>
+                        <Button title={rightButton.title} onPress={handleButtonRight}/>
+                    </View>}
                 </View>
             </ScrollView>
         </KeyboardAwareScrollView>
@@ -243,8 +270,5 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         rowGap: 10
-    },
-    estimateButton: {
-        flex: 1,
     },
 });

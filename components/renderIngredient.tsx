@@ -6,7 +6,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import CommonStyles from "../constants/commonStyle";
 
 // renders a specific ingredient for the list view
-const renderIngredientItem = ({ item, hideMaturityWarning }: { item: Ingredient, hideMaturityWarning?: boolean }) => {
+export default function renderIngredientItem({ item, hideMaturityWarning }: { item: Ingredient, hideMaturityWarning?: boolean }) {
     return (<TouchableOpacity onPress={() => router.push(`/ingredient-details/${item.id}`)}>
         <View style={styles.ingredientView}>
             <View style={styles.info}>
@@ -66,5 +66,3 @@ const styles = StyleSheet.create({
         flex: 4
     }
 })
-
-export default renderIngredientItem;

@@ -42,6 +42,10 @@ const CommonStyles = StyleSheet.create({
         flex: 1,
         gap: 10,
     },
+    // add to all buttons in  a row to make them wide and spaced equally
+    rowButton: {
+        flex: 1,
+    },
     // title for ingredient card
     ingredientContainerTitle: {
         fontSize: 16,

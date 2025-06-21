@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IngredientAmountKind } from '../types/ingredient';
 import { GroceryContextType, GroceryListItem } from '../types/grocery';
 import { RIPENESS } from '../constants/ingredientProperties';
-import dayDifference from '../constants/timeDifference';
 
 const GROCERY_STORAGE_KEY = '@kitchen_buddy_grocery';
 
@@ -18,7 +17,18 @@ export const GroceryProvider = ({ children }: { children: ReactNode }) => {
       try {
         const storedItems = await AsyncStorage.getItem(GROCERY_STORAGE_KEY);
         if (storedItems) {
-          const parsedItems: GroceryListItem[] = JSON.parse(storedItems);
+          const parsedItems: GroceryListItem[] = JSON.parse(storedItems).map((item: GroceryListItem) => ({
+            ...item,
+            item: {
+              ...item.item,
+              expirationDate: item.item.expirationDate ? new Date(item.item.expirationDate) : undefined,
+              addedDate: item.item.addedDate ? new Date(item.item.addedDate) : new Date(),
+              maturity: {
+                ...item.item.maturity,
+                edited: item.item.maturity ? new Date(item.item.maturity.edited) : new Date()
+              }
+            }
+          }));
           setItems(parsedItems);
         }
       } catch (error) {
@@ -39,7 +49,7 @@ export const GroceryProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // construct new ingredient with new id and date
-  const addItem = (item: GroceryListItem) => {
+  const addItem = (item: Partial<GroceryListItem>) => {
     // add fallback value for possibly missing fields
     const newItem: GroceryListItem = {
         item: {
