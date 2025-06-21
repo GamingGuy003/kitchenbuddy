@@ -33,7 +33,6 @@ export function useShopProximity() {
     const [appStateVisible, setAppStateVisible] = useState(appState.current);
     
     const checkLocationAndNavigate = async () => {
-        console.log('ran')
         // early return if app isnt in foreground
         if (appStateVisible !== 'active') return;
 
