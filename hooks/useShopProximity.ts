@@ -29,7 +29,7 @@ export async function getLocation() {
         // request last known position for speed. if no position gets returned, we ask the os to fetch an accurate new one which might take longer
         return await Location.getLastKnownPositionAsync({}) || await Location.getCurrentPositionAsync({});
     } catch (error) {
-        console.error("Error getting location or navigating:", error);
+        console.log("Error getting location or navigating:", error);
         Alert.alert("Location Error", "Could not fetch location. Make sure location services are enabled.");
     }
 }

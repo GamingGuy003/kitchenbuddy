@@ -4,14 +4,14 @@ import { Button, StyleSheet, Text, View, ActivityIndicator, Image, Alert } from 
 import { useRouter } from 'expo-router';
 import CommonStyles from '../../constants/commonStyle';
 
-// Define a type for the product data we expect (can be expanded)
+// Define a type for the product data we expect
 interface ProductInfo {
   product_name?: string;
   brands?: string;
   categories?: string;
-  image_url?: string; // Standard image URL
-  image_front_url?: string; // Often a more specific front image
-  image_small_url?: string; // Sometimes a smaller version is available
+  image_url?: string;
+  image_front_url?: string;
+  image_small_url?: string;
 }
 
 export default function ScanScreen(): ReactNode {
@@ -43,8 +43,7 @@ export default function ScanScreen(): ReactNode {
     setProductInfo(null); // Clear previous product info
 
     try {
-      // Using OpenFoodFacts API v2. You can also try v0 or v3.
-      // Example: https://world.openfoodfacts.org/api/v2/product/3017620422003.json
+      // Using OpenFoodFacts API v2
       const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`);
 
       const jsonResponse = await response.json();
@@ -91,8 +90,6 @@ export default function ScanScreen(): ReactNode {
         params: {
           name: productInfo.product_name,
           brand: productInfo.brands,
-          // You can pass more params like category if needed
-          // category: productInfo.categories,
         },
       });
       // Reset state for next scan
@@ -113,7 +110,7 @@ export default function ScanScreen(): ReactNode {
         <CameraView
           style={{ flex: 1 }}
           barcodeScannerSettings={{
-            barcodeTypes: ["ean13", "ean8", "upc_a", "upc_e", "qr"], // Added more common types
+            barcodeTypes: ["ean13"],
           }}
           onBarcodeScanned={scannedData ? undefined : handleBarcodeScanned}
         />
@@ -139,7 +136,7 @@ export default function ScanScreen(): ReactNode {
             <Image
               style={styles.productImage}
               source={{ uri: productInfo.image_front_url || productInfo.image_url || productInfo.image_small_url }}
-              resizeMode="contain" // Or "cover", "stretch", etc.
+              resizeMode="contain"
             />
           )}
           <Text style={styles.productName}>{productInfo.product_name || 'N/A'}</Text>
@@ -150,7 +147,7 @@ export default function ScanScreen(): ReactNode {
           </View>
         </View>
       )}
-      {/* Display the raw scanned barcode if no product info yet, for debugging/confirmation */}
+      {/* Display the raw scanned barcode if no product info yet */}
       {scannedData && !productInfo && !isLoading && !apiError && (
          <Text style={styles.scannedDataText}>Scanned: {scannedData}. Fetching...</Text>
       )}
@@ -192,7 +189,7 @@ const styles = StyleSheet.create({
   buttonGroup: {
     marginTop: 20,
     gap: 10,
-    width: '80%', // Adjust as needed
+    width: '80%',
   },
   productImage: {
     maxWidth: '80%',
