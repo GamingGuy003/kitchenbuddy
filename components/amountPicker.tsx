@@ -33,12 +33,12 @@ export default function AmountPicker(
         <View>
             <View style={{...CommonStyles.rowView, alignItems: 'flex-end' }}>
                 <Text style={{...CommonStyles.label, flex: 1 }}>Amount</Text>
-                <Text style={{...CommonStyles.label, textAlign: 'right' }}>Unit</Text>
+                <Text style={{...CommonStyles.label, textAlign: 'right', marginRight: 50 }}>Unit</Text>
             </View>
             <View style={CommonStyles.rowView}>
                 <TextInput style={{...CommonStyles.input, flex: 1 }} value={amountValue} onChangeText={setAmountValue} placeholder="e.g., 1" />
                 { units[amountKind] }
-                <Picker selectedValue={amountKind} onValueChange={setAmountKind} placeholder={amountKind} style={{width: 30}}>
+                <Picker selectedValue={amountKind} onValueChange={setAmountKind} placeholder={amountKind} style={{width: 40}}>
                     <Picker.Item key='Count' label='Pieces' value={IngredientAmountKind.COUNT}/>
                     <Picker.Item key='Fraction' label='Fraction' value={IngredientAmountKind.FRACTION}/>
                     <Picker.Item key='Custom' label='Custom' value={IngredientAmountKind.CUSTOM}/>
