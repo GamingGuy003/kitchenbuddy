@@ -101,7 +101,7 @@ export default function QueryScreen(): ReactNode {
         // if querytype has subcategories and no filter has been chosen, show section list with all items
         if (filter === '' && queryType != 'missingData' && queryType != 'recentlyAdded' && queryType != 'ripenessCheck' && queryType != 'all' ) {
             return <SectionList
-                style={CommonStyles.list}
+                style={{...CommonStyles.list, height: '90%' }}
                 sections={groupItemsByField()}
                 keyExtractor={(item) => item.id}
                 renderItem={renderIngredientItem}
@@ -111,7 +111,7 @@ export default function QueryScreen(): ReactNode {
             />
         } else {
             return <FlatList
-                style={CommonStyles.list}
+                style={{...CommonStyles.list, height: '90%' }}
                 data={filteredIngredients}
                 keyExtractor={item => item.id}
                 renderItem={renderIngredientItem}

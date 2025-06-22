@@ -66,15 +66,6 @@ export default function GroceryListScreen(): ReactNode {
                 />
             </View> }
 
-            <FlatList
-                style={CommonStyles.list}
-                keyExtractor={(item) => item.id}
-                data={itemsWithinRange()}
-                renderItem={RenderItem}
-                ListEmptyComponent={ListEmpty}
-                ItemSeparatorComponent={ItemSeparator}
-            />
-
             <View style={{...CommonStyles.rowView, ...CommonStyles.bottomButtons}}>
                 <View style={CommonStyles.rowButton}>
                     <Button title="See Shops" onPress={() => router.push(`/shops/listShops`)} />
@@ -91,6 +82,15 @@ export default function GroceryListScreen(): ReactNode {
                     <Button title="Add Item" onPress={() => router.push(`/add`)} />
                 </View>
             </View>
+
+            <FlatList
+                style={{...CommonStyles.list, height: '75%', marginTop: 10 }}
+                keyExtractor={(item) => item.id}
+                data={itemsWithinRange()}
+                renderItem={RenderItem}
+                ListEmptyComponent={ListEmpty}
+                ItemSeparatorComponent={ItemSeparator}
+            />
         </View>
     );
 }

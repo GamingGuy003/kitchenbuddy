@@ -75,7 +75,7 @@ export default function ExpiringSoonScreen(): ReactNode {
             <Slider onValueChange={debounceUpdate} minimumValue={0} maximumValue={30} value={daysThreshold} step={1} StepMarker={(props) => props.index % 5 == 0 && <Text style={styles.sliderMarker}>{props.index}</Text>} style={styles.slider}/>
             <TextInput style={CommonStyles.input} placeholder="Search expiring ingredients..." value={search} onChangeText={setSearch}/>
             <SectionList
-                style={CommonStyles.list}
+                style={{...CommonStyles.list, height: '85%' }}
                 sections={expiringIngredients}
                 keyExtractor={(item) => item.id}
                 renderItem={renderIngredientItem}
