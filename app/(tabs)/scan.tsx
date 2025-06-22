@@ -1,6 +1,6 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { ReactNode, useState } from 'react';
-import { Button, StyleSheet, Text, View, ActivityIndicator, Image } from 'react-native';
+import { Button, StyleSheet, Text, View, ActivityIndicator, Image, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import CommonStyles from '../../constants/commonStyle';
 
@@ -47,12 +47,13 @@ export default function ScanScreen(): ReactNode {
       // Using OpenFoodFacts API v2. You can also try v0 or v3.
       // Example: https://world.openfoodfacts.org/api/v2/product/3017620422003.json
       const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`);
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API request failed: ${response.status} ${errorText.substring(0,100)}`);
-      }
 
       const jsonResponse = await response.json();
+
+      if (!response.ok) {
+        setApiError(jsonResponse.status_verbose || `HTTP error! Status: ${response.status}`);
+        return;
+      }
 
       if (jsonResponse.status === 1 && jsonResponse.product) {
         setProductInfo(jsonResponse.product);
