@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import CommonStyles from "../constants/commonStyle";
 import { stringifyAmount } from "../types/ingredient";
 
-export default function RenderItemList({item}: {item: GroceryListItem}) {
+export default function RenderItem({item}: {item: GroceryListItem}) {
     const router = useRouter();
 
     return (<TouchableOpacity onPress={() => router.push(`/item-details/${item.id}`)}>

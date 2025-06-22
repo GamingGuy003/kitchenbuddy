@@ -20,7 +20,6 @@ interface IngredientFormProps {
     leftButton: { onSubmit: (data: Partial<Ingredient>) => void; title: string };
     // callback to run if right submit button gets pressed. this one is optional and it not present, only left button will be used
     rightButton?: { onSubmit: (data: Partial<Ingredient>) => void; title: string }
-    
 }
 
 export default function IngredientForm({ initialValues, datePrefilled, leftButton, rightButton }: IngredientFormProps): ReactNode {

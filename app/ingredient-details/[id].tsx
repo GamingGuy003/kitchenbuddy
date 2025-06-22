@@ -17,8 +17,8 @@ export default function IngredientDetailScreen(): ReactNode {
     const { addItem } = useGrocery();
 
     const [ingredient, setIngredient] = useState<Ingredient | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isNavigatingAway, setIsNavigatingAway] = useState(false); // Flag for deletion navigation
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isNavigatingAway, setIsNavigatingAway] = useState<boolean>(false); // Flag for deletion navigation
 
     useEffect(() => {
         if (id) {

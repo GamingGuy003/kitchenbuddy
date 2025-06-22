@@ -1,9 +1,9 @@
 import React, { useState, ReactNode, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, FlatList } from 'react-native';
+import { Text, View, Button, FlatList } from 'react-native';
 import { useShops } from '../../context/ShopContext'; // Import useShops
 import { useGrocery } from '../../context/GroceryContext';
-import RenderItemList from '../../components/renderItemList';
-import { ItemSeparator } from '../../components/listComponents';
+import RenderItem from '../../components/renderItem';
+import { ItemSeparator, ListEmpty } from '../../components/listComponents';
 import CommonStyles from '../../constants/commonStyle';
 import Slider from '@react-native-community/slider';
 import { calculateDistance, getLocation } from '../../hooks/useShopProximity';
@@ -70,7 +70,8 @@ export default function GroceryListScreen(): ReactNode {
                 style={CommonStyles.list}
                 keyExtractor={(item) => item.id}
                 data={itemsWithinRange()}
-                renderItem={RenderItemList}
+                renderItem={RenderItem}
+                ListEmptyComponent={ListEmpty}
                 ItemSeparatorComponent={ItemSeparator}
             />
 
