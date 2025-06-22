@@ -45,7 +45,7 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
   // construct new shop with new id
   const addShop = (shop: Partial<Shop>) => {
     // add fallback value for possibly missing fields
-    const newShop: Shop = {
+    const newShops: Shop[] = [...shops, {
       ...shop,
       name: shop.name || 'New Shop',
       type: shop.type || 'Other',
@@ -53,9 +53,9 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
       latitude: shop.latitude || 0,
       longitude: shop.longitude || 0,
       id: Date.now().toString(),
-    };
-    setShops([...shops, newShop]);
-    saveShops(shops);
+    }];
+    setShops(newShops);
+    saveShops(newShops);
   };
 
   // delete shop from storage
