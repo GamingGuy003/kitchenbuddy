@@ -39,6 +39,7 @@ const CommonStyles = StyleSheet.create({
         paddingTop: 15,
         paddingBottom: 5,
         borderBottomWidth: 1,
+        fontSize: 16,
         borderColor: '#ccc',
     },
     // disabled text input field
