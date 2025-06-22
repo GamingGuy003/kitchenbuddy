@@ -1,6 +1,6 @@
 import React, { useState, ReactNode, useEffect } from 'react';
 import { Text, View, StyleSheet, Button, FlatList } from 'react-native';
-import { useShops } from '../../context/ShopContext'; // Import useShops
+import { useShops } from '../../context/ShopContext';
 import { useGrocery } from '../../context/GroceryContext';
 import RenderItemList from '../../components/renderItemList';
 import { ItemSeparator } from '../../components/listComponents';
@@ -12,7 +12,7 @@ import { router } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 
 export default function GroceryListScreen(): ReactNode {
-    const { shops } = useShops(); // Use the context
+    const { shops } = useShops();
 
     const { items } = useGrocery();
 
@@ -57,11 +57,11 @@ export default function GroceryListScreen(): ReactNode {
             <View>
                 <Text style={CommonStyles.label}>Shop Proximity Radius: {proximityRadiusKm.toFixed(1)} km</Text>
                 <Slider
-                    // style={}
-                    minimumValue={0.1} // Set a minimum value for the slider
-                    maximumValue={5.0} // Set a maximum value for the slider
-                    step={0.1} // Define the step size for the slider
-                    value={proximityRadiusKm} // Bind the slider's value to the hook's state
+                    
+                    minimumValue={0.1}
+                    maximumValue={5.0}
+                    step={0.1}
+                    value={proximityRadiusKm}
                     onValueChange={setProximityRadiusKm} // Update the hook's state when the slider changes
                 />
             </View> }

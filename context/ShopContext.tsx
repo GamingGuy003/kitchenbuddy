@@ -15,7 +15,7 @@ interface ShopContextType {
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
 export const ShopProvider = ({ children }: { children: ReactNode }) => {
-  const [shops, setShops] = useState<Shop[]>([]); // Initialize with an empty array or your initial data
+  const [shops, setShops] = useState<Shop[]>([]);
 
   useEffect(() => {
   // function to load Shops from storage
@@ -33,7 +33,7 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
     loadShops();
   }, []);
 
-  // saves Shop to storage
+  
   const saveShops = async (shops: Shop[]) => {
     try {
       await AsyncStorage.setItem(SHOPS_STORAGE_KEY, JSON.stringify(shops));
@@ -42,7 +42,7 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // construct new shop with new id
+  
   const addShop = (shop: Partial<Shop>) => {
     // add fallback value for possibly missing fields
     const newShops: Shop[] = [...shops, {
@@ -58,7 +58,6 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
     saveShops(newShops);
   };
 
-  // delete shop from storage
   const deleteShop = (id: string) => {
     const cleanedShops = shops.filter(i => i.id !== id);
     setShops(cleanedShops);

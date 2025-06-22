@@ -1,7 +1,7 @@
-import IngredientForm from '../../components/IngredientForm'; // Import the IngredientForm
+import IngredientForm from '../../components/IngredientForm';
 import { useIngredients } from '../../context/IngredientContext';
 import { Ingredient, IngredientAmountKind } from '../../types/ingredient';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation } from '@react-navigation/native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, View } from 'react-native';
@@ -12,17 +12,17 @@ import CommonStyles from '../../constants/commonStyle';
 export default function IngredientDetailScreen(): ReactNode {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
-    const navigation = useNavigation(); // Get navigation object
+    const navigation = useNavigation();
     const { getIngredientById, updateIngredient, deleteIngredient } = useIngredients();
     const { addItem } = useGrocery();
 
     const [ingredient, setIngredient] = useState<Ingredient | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isNavigatingAway, setIsNavigatingAway] = useState(false); // Flag for deletion navigation
+    const [isNavigatingAway, setIsNavigatingAway] = useState(false);
 
     useEffect(() => {
         if (id) {
-            // If we are in the process of navigating away (e.g., after delete), do nothing.
+            // If we are in the process of navigating away (e.g., after delete), do nothing
             if (isNavigatingAway) {
                 setIsLoading(false); // Ensure loading state is false if we are bailing out
                 return;
