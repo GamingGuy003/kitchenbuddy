@@ -11,7 +11,7 @@ import { ItemSeparator, ListEmpty, SectionHeader } from '../../components/listCo
 
 export default function ExpiringSoonScreen(): ReactNode {
     const { ingredients } = useIngredients();
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState<string>('');
     const [daysThreshold, setDaysThreshold] = useState<number>(0); // Defaults to what spoils today (in 0 days)
 
     const expiringIngredients = useMemo(() => {        

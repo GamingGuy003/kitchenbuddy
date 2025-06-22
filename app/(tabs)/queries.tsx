@@ -20,7 +20,7 @@ export default function QueryScreen(): ReactNode {
     // filter selection
     const [filter, setFilter] = useState<Filter>('');
     // search field text
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState<string>('');
 
     // only show ingredients matching the current query and filter
     const filteredIngredients = useMemo(() => {
