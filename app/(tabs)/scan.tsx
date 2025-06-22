@@ -12,7 +12,6 @@ interface ProductInfo {
   image_url?: string; // Standard image URL
   image_front_url?: string; // Often a more specific front image
   image_small_url?: string; // Sometimes a smaller version is available
-  // Add other fields you might want to use from the API response
 }
 
 export default function ScanScreen(): ReactNode {

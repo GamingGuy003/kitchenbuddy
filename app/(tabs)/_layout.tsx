@@ -7,7 +7,6 @@ type IconName = keyof typeof Ionicons.glyphMap;
 
 export default function TabLayout() {
   return (
-    
     <Tabs screenOptions={({ route }) => ({
         animation: 'shift',
         tabBarIcon: ({ focused, color, size }) => {
