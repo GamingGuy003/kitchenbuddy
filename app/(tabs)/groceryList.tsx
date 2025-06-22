@@ -82,6 +82,14 @@ export default function GroceryListScreen(): ReactNode {
                     <Button title="Add Shop" onPress={() => router.push(`/shops/addShop`)} />
                 </View>
             </View>
+            <View style={{...CommonStyles.rowView, ...CommonStyles.bottomButtons}}>
+                <View style={CommonStyles.rowButton}>
+                    <Button title="Select Item" onPress={() => router.push(`/queries`)} />
+                </View>
+                <View style={CommonStyles.rowButton}>
+                    <Button title="Add Item" onPress={() => router.push(`/add`)} />
+                </View>
+            </View>
         </View>
     );
 }
