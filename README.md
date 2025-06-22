@@ -1,5 +1,11 @@
 ## Kitchen buddy big brain app
 
+Setup and run locally via
+```bash
+npm install
+npx expo start
+```
+
 - [app](#app)
     - [ingredient-details](#ingredient-details)
         - [[id]](#ingredient-detailsid)
