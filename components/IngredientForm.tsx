@@ -38,11 +38,11 @@ export default function IngredientForm({ initialValues, datePrefilled, leftButto
     const [amountUnit, setAmountUnit] = useState<string | undefined>(initialValues?.amount?.kind === IngredientAmountKind.CUSTOM ? initialValues.amount.unit : undefined);
     const [isDatePickerVisible, setDatePickerVisibility] = useState<boolean>(false);
     const [locks, setLocks] = useState<FormLock>({
-        nameLock: name !== undefined,
-        brandLock: brand !== undefined,
-        categoryLock: category !== undefined,
-        confectionLock: confectionType !== undefined,
-        dateLock: !datePrefilled && expirationDate !== undefined,
+        nameLock: initialValues?.name !== undefined,
+        brandLock: initialValues?.brand !== undefined,
+        categoryLock: initialValues?.category !== undefined,
+        confectionLock: initialValues?.confectionType !== undefined,
+        dateLock: !datePrefilled && initialValues?.expirationDate !== undefined,
     });
 
     useEffect(() => {
@@ -61,11 +61,11 @@ export default function IngredientForm({ initialValues, datePrefilled, leftButto
             setAmountUnit(initialValues?.amount?.kind === IngredientAmountKind.CUSTOM ? initialValues.amount.unit : undefined);
             setFreezeInterval(initialValues.frozen);
             setLocks({
-                nameLock: name !== undefined,
-                brandLock: brand !== undefined,
-                categoryLock: category !== undefined,
-                confectionLock: confectionType !== undefined,
-                dateLock: !datePrefilled && expirationDate !== undefined,
+                nameLock: initialValues?.name !== undefined,
+                brandLock: initialValues?.brand !== undefined,
+                categoryLock: initialValues?.category !== undefined,
+                confectionLock: initialValues?.confectionType !== undefined,
+                dateLock: !datePrefilled && initialValues?.expirationDate !== undefined,
             });
         }
     }, [initialValues]);
