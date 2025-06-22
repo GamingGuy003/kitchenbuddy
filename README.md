@@ -33,6 +33,12 @@
     - [IngredientContext](#ingredientcontext)
     - [ShopContext](#shopcontext)
 - [hooks](#hooks)
+    - [useShopProximity](#useshopproximity)
+- [types](#types)
+    - [formLock](#formlock)
+    - [grocery](#grocery)
+    - [ingredient](#ingredient)
+    - [shop](#shop)
 
 ## app
 
